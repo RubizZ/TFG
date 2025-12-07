@@ -1,0 +1,9 @@
+{
+    "watch": [
+        "src"
+    ],
+    "ext": "ts",
+    "exec": "node --enable-source-maps --inspect=0.0.0.0:9229 --import tsx src/index.ts",
+    "legacyWatch": true,
+    "delay": 1000
+}
