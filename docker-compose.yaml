@@ -1,10 +1,24 @@
 services:
+  mongodb:
+    image: mongo:6
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 1234
+    volumes:
+      - mongo_data:/data/db
+
   server:
     build:
       context: ./backend
     ports:
       - 3000:3000
       - 9229:9229
+    depends_on:
+      - mongodb
+    env_file:
+      - ./backend/.env
     volumes:
       - ./backend/src:/usr/src/app/src
       - ./backend/tsconfig.json:/usr/src/app/tsconfig.json
@@ -25,4 +39,7 @@ services:
       - ./frontend/vite.config.ts:/usr/src/app/vite.config.ts
       - ./frontend/package.json:/usr/src/app/package.json
     depends_on:
-      - server 
+      - server
+
+volumes:
+  mongo_data:
