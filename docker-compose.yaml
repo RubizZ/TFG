@@ -17,13 +17,13 @@ services:
       - 9229:9229
     depends_on:
       - mongodb
-    env_file:
-      - ./backend/.env
     volumes:
-      - ./backend/src:/usr/src/app/src
-      - ./backend/tsconfig.json:/usr/src/app/tsconfig.json
-      - ./backend/package.json:/usr/src/app/package.json
-      - ./backend/nodemon.json:/usr/src/app/nodemon.json
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - MONGODB_URI=mongodb://root:1234@mongodb:27017/tfg?authSource=admin
 
   website:
     build:
@@ -33,11 +33,8 @@ services:
     ports:
       - 5173:5173
     volumes:
-      - ./frontend/src:/usr/src/app/src
-      - ./frontend/index.html:/usr/src/app/index.html
-      - ./frontend/tsconfig.json:/usr/src/app/tsconfig.json
-      - ./frontend/vite.config.ts:/usr/src/app/vite.config.ts
-      - ./frontend/package.json:/usr/src/app/package.json
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
     depends_on:
       - server
 

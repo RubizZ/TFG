@@ -1,0 +1,14 @@
+{
+    "entryFile": "src/index.ts",
+    "controllerPathGlobs": [
+        "src/**/*.controller.ts"
+    ],
+    "spec": {
+        "outputDirectory": "build",
+        "specFileBaseName": "swagger.json"
+    },
+    "routes": {
+        "autoAlias": true,
+        "routesDir": "build"
+    }
+}
