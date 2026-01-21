@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Route } from "tsoa";
-import { User } from "../../models/user.model.js";
+import { User } from "./user.model.js";
 
 @Route("users")
 export class UsersController extends Controller {
