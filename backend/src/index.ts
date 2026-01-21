@@ -1,6 +1,6 @@
 import express from 'express';
 import { connectDB } from './config/database.js';
-import { User } from './models/user.model.js';
+import { RegisterRoutes } from '../build/routes.js';
 
 const PORT = process.env.PORT || 3000;
 
@@ -10,10 +10,7 @@ app.use(express.json());
 
 connectDB();
 
-app.post("/users", async (req, res) => {
-    const user = await User.create(req.body);
-    res.json(user);
-})
+RegisterRoutes(app)
 
 app.get('/', (req, res) => {
     res.send('Hello World');
