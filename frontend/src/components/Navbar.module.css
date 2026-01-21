@@ -1,0 +1,31 @@
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.links {
+    display: flex;
+    gap: 2rem;
+}
+
+.link {
+    text-decoration: none;
+    cursor: pointer;   
+}
+
+.auths {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.auths button {
+    padding: 0.25rem 0.75rem;
+}
