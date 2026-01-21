@@ -1,7 +1,12 @@
+import Navbar from "./components/Navbar.tsx";
+import SearchFlight from "./components/SearchFlight.tsx";
+import "./App.css";
+
 export default function App() {
     return (
         <div>
-            <h1>Hello World</h1>
+            <Navbar />
+            <SearchFlight />
         </div>
     );
 }
