@@ -36,6 +36,21 @@ const ItinerarySchema = new Schema<IItinerary>({
   city_order: [String],
   legs: [LegSchema],
   created_at: { type: Date, default: Date.now }
+}, {
+  versionKey: false,
+  toJSON: {
+    transform: (doc, ret) => {
+      delete (ret as any)._id;
+      return ret;
+    }
+  },
+  toObject: {
+    transform: (doc, ret) => {
+      delete (ret as any)._id;
+      return ret;
+    }
+  },
+  id: false
 });
 
 export const Itinerary = model<IItinerary>("Itinerary", ItinerarySchema);
