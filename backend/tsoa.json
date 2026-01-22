@@ -4,11 +4,27 @@
         "src/**/*.controller.ts"
     ],
     "spec": {
+        "specVersion": 3,
         "outputDirectory": "build",
-        "specFileBaseName": "swagger.json"
+        "specFileBaseName": "swagger.json",
+        "securityDefinitions": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            },
+            "bypass": {
+                "type": "apiKey",
+                "name": "none",
+                "in": "header"
+            }
+        }
     },
     "routes": {
         "autoAlias": true,
-        "routesDir": "build"
+        "routesDir": "build",
+        "iocModule": "src/ioc.ts",
+        "middleware": "express",
+        "authenticationModule": "src/modules/auth/authentication.ts"
     }
 }

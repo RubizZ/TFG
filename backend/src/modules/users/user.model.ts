@@ -12,6 +12,7 @@ export interface IUser {
     airline_quality_weight: number;
   };
   created_at: Date;
+  auth_version: number;
 }
 
 const UserSchema = new Schema<IUser>({
@@ -20,12 +21,13 @@ const UserSchema = new Schema<IUser>({
   password: { type: String, required: true },
   role: { type: String, enum: ["user", "admin"], default: "user" },
   preferences: {
-    price_weight: { type: Number, default: 0.4},
+    price_weight: { type: Number, default: 0.4 },
     duration_weight: { type: Number, default: 0.2 },
     stops_weigth: { type: Number, default: 0.2 },
     airline_quality_weight: { type: Number, default: 0.2 },
   },
-  created_at: { type: Date, default: Date.now }
+  created_at: { type: Date, default: Date.now },
+  auth_version: { type: Number, default: 1 }
 });
 
 export const User = model<IUser>("User", UserSchema);
