@@ -6,7 +6,7 @@ import { SearchNotFoundError } from "./search.errors.js";
 
 @singleton()
 export class SearchService {
-    public async createSearch(data: SearchRequest & { requesterId: string | undefined }) {
+    public async createSearch(data: SearchRequest & { user_id?: string }) {
         const search = await Search.create(data)
         this.runExploration(search.public_id, data)
         return search
