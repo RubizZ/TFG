@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import express from 'express';
 import { connectDB } from './config/database.js';
 import { RegisterRoutes } from '../build/routes.js';
@@ -7,6 +8,7 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 connectDB();
 
