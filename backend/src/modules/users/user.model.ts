@@ -1,6 +1,8 @@
 import { Schema, model } from "mongoose";
+import { randomUUID } from "node:crypto";
 
 export interface IUser {
+  id: string;
   username: string;
   email: string;
   password: string;
@@ -17,8 +19,9 @@ export interface IUser {
 }
 
 const UserSchema = new Schema<IUser>({
-  username: { type: String, required: true, unique: true },
-  email: { type: String, required: true, unique: true },
+  id: { type: String, default: () => randomUUID(), unique: true, index: true },
+  username: { type: String, required: true, unique: true, index: true },
+  email: { type: String, required: true, unique: true, index: true },
   password: { type: String, required: true },
   role: { type: String, enum: ["user", "admin"], default: "user" },
   preferences: {

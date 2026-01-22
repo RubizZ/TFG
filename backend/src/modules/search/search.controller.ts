@@ -22,7 +22,8 @@ export class SearchController extends Controller {
         @RequestProp('user') user: AuthenticatedUser | null
     ) {
         const request: SearchRequest & { user_id?: string } = { ...body };
-        if (user) request.user_id = user.user._id;
+        if (user) request.user_id = user.id;
+        this.setStatus(201);
         return this.searchService.createSearch(request);
     }
 
@@ -33,6 +34,6 @@ export class SearchController extends Controller {
         @Query('id') searchId: string,
         @RequestProp('user') user: AuthenticatedUser | null
     ) {
-        return this.searchService.getSearch(searchId, user?.user._id)
+        return this.searchService.getSearch(searchId, user?.id)
     }
 }

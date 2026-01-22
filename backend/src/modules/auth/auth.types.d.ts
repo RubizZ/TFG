@@ -1,5 +1,5 @@
 export interface SafeUser {
-    _id: string;
+    id: string;
     username: string;
     email: string;
     role: "user" | "admin";
@@ -20,9 +20,7 @@ export interface SafeUser {
     auth_version: number;
 }
 
-export interface AuthenticatedUser {
-    user: SafeUser;
-    userId: string;
+export type AuthenticatedUser = SafeUser & {
     token: string;
 }
 

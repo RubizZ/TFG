@@ -19,6 +19,6 @@ export class AuthController extends Controller {
     @Post("/logoutAll")
     @Security("jwt")
     public async logoutAll(@RequestProp("user") user: AuthenticatedUser) {
-        return await this.authService.logoutAll(user.userId);
+        return await this.authService.logoutAll(user.id);
     }
 }
