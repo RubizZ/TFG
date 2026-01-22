@@ -45,7 +45,7 @@ export class AuthService {
 
         const token = jwt.sign(
             {
-                userId: user._id.toString(),
+                userId: user.id,
                 version: user.auth_version
             } as JWTPayload,
             this.jwtSecret,
@@ -53,13 +53,13 @@ export class AuthService {
         );
 
         return {
-            userId: user._id.toString(),
+            userId: user.id,
             token,
             authVersion: user.auth_version
         };
     }
 
     public async logoutAll(userId: string) {
-        await User.updateOne({ _id: userId }, { $inc: { auth_version: 1 } });
+        await User.updateOne({ id: userId }, { $inc: { auth_version: 1 } });
     }
 }

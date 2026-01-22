@@ -29,7 +29,7 @@ export async function expressAuthentication(
         try {
             const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
 
-            const user = await User.findById(decoded.userId);
+            const user = await User.findOne({ id: decoded.userId });
             if (!user) {
                 throw new UserNotFoundError(decoded.userId);
             }
@@ -43,7 +43,7 @@ export async function expressAuthentication(
 
             const userObj = user.toObject();
             const safeUser = {
-                _id: userObj._id.toString(),
+                id: userObj.id,
                 username: userObj.username,
                 email: userObj.email,
                 role: userObj.role,
@@ -54,8 +54,7 @@ export async function expressAuthentication(
             } satisfies SafeUser;
 
             return {
-                user: safeUser,
-                userId: decoded.userId,
+                ...safeUser,
                 token: token,
             };
         } catch (err) {
