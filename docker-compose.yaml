@@ -25,6 +25,8 @@ services:
       - NODE_ENV=development
       - PORT=3000
       - MONGODB_URI=mongodb://root:1234@mongodb:27017/tfg?authSource=admin
+      - JWT_SECRET=secret
+      - JWT_EXPIRATION=30d
 
   website:
     build:

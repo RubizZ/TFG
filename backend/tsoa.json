@@ -8,7 +8,7 @@
         "outputDirectory": "build",
         "specFileBaseName": "swagger.json",
         "securityDefinitions": {
-            "bearerAuth": {
+            "jwt": {
                 "type": "http",
                 "scheme": "bearer",
                 "bearerFormat": "JWT"

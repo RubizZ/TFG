@@ -15,22 +15,24 @@ export class SearchController extends Controller {
     }
 
     @Post("/")
-    @Security('bearerAuth')
+    @Security('jwt')
     @Security('bypass')
     public async searchRequest(
         @Body() body: SearchRequest,
         @RequestProp('user') user: AuthenticatedUser | null
     ) {
-        return this.searchService.createSearch({ ...body, requesterId: user?.userId })
+        const request: SearchRequest & { user_id?: string } = { ...body };
+        if (user) request.user_id = user.user._id;
+        return this.searchService.createSearch(request);
     }
 
     @Get("/")
-    @Security('bearerAuth')
+    @Security('jwt')
     @Security('bypass')
     public async searchResult(
         @Query('id') searchId: string,
         @RequestProp('user') user: AuthenticatedUser | null
     ) {
-        return this.searchService.getSearch(searchId, user?.userId)
+        return this.searchService.getSearch(searchId, user?.user._id)
     }
 }
