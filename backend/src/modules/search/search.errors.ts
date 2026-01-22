@@ -1,7 +1,7 @@
-export class SearchNotFoundError extends Error {
-    public readonly status = 404;
+import { AppError } from "../../utils/errors.js";
+
+export class SearchNotFoundError extends AppError {
     constructor(searchId: string, requesterId: string) {
-        super(`Search with ID ${searchId} not found for user ${requesterId}`);
-        this.name = "SearchNotFoundError";
+        super(`Search with ID ${searchId} not found for user ${requesterId}`, 404);
     }
 }
