@@ -16,6 +16,8 @@ export interface IUser {
   created_at: Date;
   last_seen_at: Date;
   auth_version: number;
+  password_reset_token?: string;
+  password_reset_expires?: Date;
 }
 
 const UserSchema = new Schema<IUser>({
@@ -32,7 +34,9 @@ const UserSchema = new Schema<IUser>({
   },
   created_at: { type: Date, default: Date.now },
   last_seen_at: { type: Date, default: Date.now },
-  auth_version: { type: Number, default: 1 }
+  auth_version: { type: Number, default: 1 },
+  password_reset_token: { type: String, select: false },
+  password_reset_expires: { type: Date, select: false }
 });
 
 export const User = model<IUser>("User", UserSchema);

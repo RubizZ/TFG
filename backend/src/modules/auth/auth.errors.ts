@@ -35,4 +35,9 @@ export class AuthenticationVersionMismatchError extends AuthError {
         super("Authentication version mismatch. Please login again.", 401);
     }
 }
+export class ResetTokenInvalidOrExpiredError extends AuthError {
+    constructor() {
+        super("The reset token is invalid or has expired.", 400);
+    }
+}
 
