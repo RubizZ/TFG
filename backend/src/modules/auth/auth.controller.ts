@@ -20,10 +20,7 @@ export class AuthController extends Controller {
     @Security("jwt")
     public async logoutAll(@RequestProp("user") user: AuthenticatedUser) {
         await this.authService.logoutAll(user.id);
-        return {
-            status: "success",
-            message: "Sesiones cerradas correctamente."
-        };
+        return { message: "Sesiones cerradas correctamente." };
     }
 
     @Post("/change-password")
@@ -31,29 +28,20 @@ export class AuthController extends Controller {
     public async changePassword(@RequestProp("user") user: AuthenticatedUser, @Body() body: { oldPassword: string; newPassword: string }) {
         const { oldPassword, newPassword, } = body;
         await this.authService.changePassword(user.id, oldPassword, newPassword);
-        return {
-            status: "success",
-            message: "Contraseña cambiada correctamente."
-        };
+        return { message: "Contraseña cambiada correctamente." };
     }
 
     @Post("/forgot-password")
     public async forgotPassword(@Body() body: { email: string }) {
         const { email } = body;
         await this.authService.forgotPassword(email);
-        return {
-            status: "success",
-            message: "Si existe un usuario asociado a esa cuenta, se ha enviado un email de recuperación."
-        };
+        return { message: "Si existe un usuario asociado a esa cuenta, se ha enviado un email de recuperación." };
     }
 
     @Post("/reset-password")
     public async resetPassword(@Body() body: { token: string; newPassword: string }) {
         const { token, newPassword } = body;
         await this.authService.resetPassword(token, newPassword);
-        return {
-            status: "success",
-            message: "Contraseña restablecida correctamente."
-        };
+        return { message: "Contraseña restablecida correctamente." };
     }
 }
