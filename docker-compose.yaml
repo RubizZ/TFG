@@ -9,6 +9,15 @@ services:
     volumes:
       - mongo_data:/data/db
 
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - 8025:8025 # Web UI
+      - 1025:1025 # SMTP
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
   server:
     build:
       context: ./backend
@@ -17,6 +26,7 @@ services:
       - 9229:9229
     depends_on:
       - mongodb
+      - mailpit
     command: sh -c "npm install && npm run dev"
     volumes:
       - ./backend:/usr/src/app
@@ -27,6 +37,12 @@ services:
       - MONGODB_URI=mongodb://root:1234@mongodb:27017/tfg?authSource=admin
       - JWT_SECRET=secret
       - JWT_EXPIRATION=30d
+      - FRONTEND_URL=http://localhost:5173
+      - SMTP_HOST=mailpit
+      - SMTP_PORT=1025
+      - SMTP_USER=any
+      - SMTP_PASS=any
+      - SMTP_FROM=TFG <noreply@tfg.local>
 
   website:
     build:
