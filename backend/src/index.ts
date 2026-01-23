@@ -23,7 +23,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
         return res.status(422).json({
             status: 'fail',
             data: {
-                message: 'Validation Failed',
+                message: 'Request validation failed',
                 details: err.fields,
             },
         });

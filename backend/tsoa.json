@@ -26,5 +26,6 @@
         "iocModule": "src/ioc.ts",
         "middleware": "express",
         "authenticationModule": "src/modules/auth/authentication.ts"
-    }
+    },
+    "noImplicitAdditionalProperties": "throw-on-extras"
 }
