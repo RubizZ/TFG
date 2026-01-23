@@ -41,3 +41,8 @@ export class ResetTokenInvalidOrExpiredError extends AuthError {
     }
 }
 
+export class TokenUserNotFoundError extends AuthError {
+    constructor() {
+        super("The user associated with this token no longer exists.", 401);
+    }
+}

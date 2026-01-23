@@ -2,7 +2,7 @@ import type { Request } from "express";
 import type { AuthenticatedUser, JWTPayload, SafeUser } from "./auth.types.js";
 import jwt from "jsonwebtoken";
 import { User } from "../users/user.model.js";
-import { AuthenticationVersionMismatchError, InvalidTokenError, NoTokenProvidedError, UserNotFoundError } from "./auth.errors.js";
+import { AuthenticationVersionMismatchError, InvalidTokenError, NoTokenProvidedError, TokenUserNotFoundError } from "./auth.errors.js";
 
 if (!process.env.JWT_SECRET) {
     throw new Error("JWT_SECRET is not defined");
@@ -31,7 +31,7 @@ export async function expressAuthentication(
 
             const user = await User.findOne({ id: decoded.userId });
             if (!user) {
-                throw new UserNotFoundError(decoded.userId);
+                throw new TokenUserNotFoundError();
             }
 
             if (user.auth_version !== decoded.version) {
@@ -58,7 +58,7 @@ export async function expressAuthentication(
                 token: token,
             };
         } catch (err) {
-            if (err instanceof AuthenticationVersionMismatchError || err instanceof UserNotFoundError || err instanceof NoTokenProvidedError) {
+            if (err instanceof AuthenticationVersionMismatchError || err instanceof TokenUserNotFoundError || err instanceof NoTokenProvidedError) {
                 throw err;
             }
             const message = err instanceof Error ? err.message : undefined;
