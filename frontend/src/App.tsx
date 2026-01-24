@@ -1,11 +1,13 @@
-import Navbar from "./components/Navbar.tsx";
-import SearchFlight from "./components/SearchFlight.tsx";
+import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import { ThemeProvider } from "./context/ThemeContext.tsx"
+import { routes } from "./routes";
+
+const router = createBrowserRouter(routes);
 
 export default function App() {
     return (
-        <div>
-            <Navbar />
-            <SearchFlight />
-        </div>
+        <ThemeProvider>
+            <RouterProvider router={router} />
+        </ThemeProvider>
     );
 }
