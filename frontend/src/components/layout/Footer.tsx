@@ -1,16 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Info, X } from "lucide-react";
 
 export default function Footer() {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [showButton, setShowButton] = useState(false);
+
+    // Efecto para mostrar el boton que abre el footer si el scroll es (casi) maximo o si el footer esta abierto
+    useEffect(() => {
+        const handleScroll = () => {
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            const scrollTop = window.scrollY;
+
+            const isAtBottom = windowHeight + scrollTop >= documentHeight - 50;
+
+            setShowButton(isAtBottom || isExpanded);
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        handleScroll();
+
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [isExpanded]);
 
     return (
         <>
-            {/* Botón de Información */}
+            {/* Boton de apertura/cierre del footer */}
             <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="fixed bottom-6 right-6 z-50 p-3 bg-accent text-on-accent rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer border border-white/20 group"
+                className={`fixed bottom-6 right-6 z-50 p-3 bg-accent text-on-accent rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all duration-500 cursor-pointer border border-white/20 group ${showButton ? "translate-y-0 opacity-100 scale-100" : "translate-y-20 opacity-0 scale-50 pointer-events-none"
+                    }`}
                 aria-label="Toggle information"
             >
                 {isExpanded ? (
@@ -20,22 +40,34 @@ export default function Footer() {
                 )}
             </button>
 
-            {/* Footer Extensible */}
+            {/* Footer extensible */}
             <footer
-                className={`fixed bottom-0 left-0 w-full bg-accent/95 backdrop-blur-md text-on-accent transition-all duration-500 ease-in-out z-40 transform ${isExpanded ? "translate-y-0 shadow-[0_-20px_50px_-12px_rgba(0,0,0,0.3)]" : "translate-y-full"
-                    } border-t border-white/10`}
+                className={`fixed bottom-0 left-0 w-full bg-accent/90 backdrop-blur-2xl text-on-accent transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] z-40 transform ${isExpanded ? "translate-y-0 shadow-[0_-20px_100px_-20px_rgba(0,0,0,0.7)]" : "translate-y-full"
+                    } border-t border-white/30`}
+                style={{
+                    maskImage: 'linear-gradient(to bottom, transparent, black 15%)',
+                    WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 15%)'
+                }}
             >
-                <div className="py-10 px-6">
-                    <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+                {/* Textura de fondo */}
+                <div className="absolute inset-0 opacity-[0.05] pointer-events-none"
+                    style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)', backgroundSize: '16px 16px' }} />
+                <div className="absolute inset-0 bg-linear-to-tr from-black/20 via-transparent to-white/10 pointer-events-none" />
+
+                {/* Brillo en el borde superior */}
+                <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/40 to-transparent" />
+
+                <div className="relative pt-16 pb-12 px-6">
+                    <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
                         <div className="flex flex-col items-center md:items-start text-center md:text-left">
-                            <span className="font-bold text-2xl tracking-tighter mb-2">fl/AI\ght</span>
-                            <p className="text-sm opacity-60">© {new Date().getFullYear()} TFG. Innovating the way you fly.</p>
+                            <span className="font-bold text-3xl tracking-tighter mb-2 bg-clip-text text-transparent bg-linear-to-b from-white to-white/60">fl/AI\ght</span>
+                            <p className="text-sm opacity-50 font-medium">© {new Date().getFullYear()} fl/AI\ght. Innovating the way you fly.</p>
                         </div>
-                        <div className="flex flex-wrap justify-center gap-x-8 gap-y-4">
-                            <Link to="/about" onClick={() => setIsExpanded(false)} className="text-sm font-medium hover:opacity-70 transition-opacity">About us</Link>
-                            <Link to="/contact" onClick={() => setIsExpanded(false)} className="text-sm font-medium hover:opacity-70 transition-opacity">Contact</Link>
-                            <Link to="/privacy" onClick={() => setIsExpanded(false)} className="text-sm font-medium hover:opacity-70 transition-opacity">Privacy Policy</Link>
-                            <Link to="/terms" onClick={() => setIsExpanded(false)} className="text-sm font-medium hover:opacity-70 transition-opacity">Terms of Service</Link>
+                        <div className="flex flex-wrap justify-center gap-x-10 gap-y-6">
+                            <Link to="/about" onClick={() => setIsExpanded(false)} className="text-sm font-semibold hover:opacity-100 opacity-70 transition-all hover:-translate-y-px">About us</Link>
+                            <Link to="/contact" onClick={() => setIsExpanded(false)} className="text-sm font-semibold hover:opacity-100 opacity-70 transition-all hover:-translate-y-px">Contact</Link>
+                            <Link to="/privacy" onClick={() => setIsExpanded(false)} className="text-sm font-semibold hover:opacity-100 opacity-70 transition-all hover:-translate-y-px">Privacy Policy</Link>
+                            <Link to="/terms" onClick={() => setIsExpanded(false)} className="text-sm font-semibold hover:opacity-100 opacity-70 transition-all hover:-translate-y-px">Terms of Service</Link>
                         </div>
                     </div>
                 </div>
