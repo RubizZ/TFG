@@ -65,7 +65,7 @@ export interface ApiRequestParameters{
     arrival_id: string | string[];
 
     gl: string; //país usado para la busqueda de google vuelos
-    hl: "en"; //idioma de los resultados
+    hl: string; //idioma de los resultados
     currency: string; //default:USD
 
     type: 2; // 2 = one way, lo usamos así siempre
@@ -128,7 +128,7 @@ export interface Segment{
     arrival?: Airport;
 }
 
-export interface SerpApiRespone{
+export interface SerpApiResponse{
     search_metadata: {
         id: string;
         status:string;
