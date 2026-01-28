@@ -7,7 +7,7 @@ import crypto from "node:crypto";
 import { MailService } from "../../services/mail.service.js";
 import { MailTemplates } from "../../services/mail.templates.js";
 import { InvalidPasswordError, UserNotFoundError, ResetTokenInvalidOrExpiredError } from "./auth.errors.js";
-import type { AuthResponse, JWTPayload } from "./auth.types.js";
+import type { LoginResponseData, JWTPayload } from "./auth.types.js";
 
 export class PasswordService {
     public static hashPassword(password: string) {
@@ -16,6 +16,16 @@ export class PasswordService {
 
     public static comparePassword(password: string, hash: string) {
         return bcrypt.compareSync(password, hash);
+    }
+}
+
+export class ResetTokenService {
+    public static generateToken() {
+        return crypto.randomBytes(32).toString("hex");
+    }
+
+    public static generateHashedToken(token: string) {
+        return crypto.createHash("sha256").update(token).digest("hex");
     }
 }
 
@@ -39,11 +49,11 @@ export class AuthService {
         this.jwtExpiration = process.env.JWT_EXPIRATION ? Math.floor(ms(process.env.JWT_EXPIRATION as ms.StringValue) / 1000) : 2592000; // 30 days
     }
 
-    public async login(identifier: string, password: string): Promise<AuthResponse> {
+    public async login(identifier: string, password: string): Promise<LoginResponseData> {
         const user = await User.findOne({ $or: [{ email: identifier }, { username: identifier }] })
 
         if (!user) {
-            throw new UserNotFoundError(identifier);
+            throw new InvalidPasswordError(identifier); // Evitar que el error indique que el usuario no existe 
         }
 
         const passwordMatch = PasswordService.comparePassword(password, user.password);
@@ -87,8 +97,8 @@ export class AuthService {
     }
 
     public async forgotPassword(email: string) {
-        const resetToken = crypto.randomBytes(32).toString("hex");
-        const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+        const resetToken = ResetTokenService.generateToken();
+        const hashedToken = ResetTokenService.generateHashedToken(resetToken);
 
         const user = await User.findOneAndUpdate(
             { email },
@@ -112,7 +122,7 @@ export class AuthService {
     }
 
     public async resetPassword(token: string, newPassword: string) {
-        const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+        const hashedToken = ResetTokenService.generateHashedToken(token);
 
         const user = await User.findOneAndUpdate(
             {

@@ -40,6 +40,11 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
   }
 }
