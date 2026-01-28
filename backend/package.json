@@ -9,10 +9,10 @@
   "scripts": {
     "dev": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "openapi": "tsoa spec",
-    "tsoa:spec": "tsoa spec",
+    "openapi": "tsoa spec && cp build/openapi.json ../frontend/src/api/openapi.json",
+    "tsoa:spec": "tsoa spec && cp build/openapi.json ../frontend/src/api/openapi.json",
     "tsoa:routes": "tsoa routes",
-    "tsoa:generate": "tsoa spec-and-routes"
+    "tsoa:generate": "tsoa spec-and-routes && cp build/openapi.json ../frontend/src/api/openapi.json"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
