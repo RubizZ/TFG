@@ -6,17 +6,17 @@
     "spec": {
         "specVersion": 3,
         "outputDirectory": "build",
-        "specFileBaseName": "swagger.json",
+        "specFileBaseName": "openapi",
         "securityDefinitions": {
             "jwt": {
                 "type": "http",
                 "scheme": "bearer",
                 "bearerFormat": "JWT"
             },
-            "bypass": {
-                "type": "apiKey",
-                "name": "none",
-                "in": "header"
+            "jwt-optional": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
             }
         }
     },

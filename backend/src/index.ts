@@ -1,16 +1,29 @@
 import 'dotenv/config'
 import 'reflect-metadata'
 import express from 'express';
+import cors from 'cors';
 import { connectDB } from './config/database.js';
 import { RegisterRoutes } from '../build/routes.js';
 import { ValidateError } from 'tsoa';
 import { AppError } from './utils/errors.js';
+import swaggerUi from 'swagger-ui-express';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 3000;
 
 const app = express();
 
-// Middleware to parse JSON and URL-encoded bodies
+app.use(cors({
+    origin: process.env.FRONTEND_URL,
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -37,6 +50,12 @@ app.use((req, res, next) => {
     next();
 });
 
+// Swagger UI documentation (only in development)
+if (process.env.NODE_ENV !== 'production') {
+    const openApiSpec = JSON.parse(fs.readFileSync(path.join(__dirname, '../build/openapi.json'), 'utf8'));
+    app.use('/docs', swaggerUi.serve, swaggerUi.setup(openApiSpec));
+}
+
 // Register routes from tsoa
 RegisterRoutes(app)
 
@@ -47,6 +66,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
         return res.status(422).json({
             status: 'fail',
             data: {
+                code: 'VALIDATION_ERROR',
                 message: 'Request validation failed',
                 details: err.fields,
             },
@@ -57,6 +77,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
         return res.status(err.statusCode).json({
             status: 'fail',
             data: {
+                code: err.code,
                 message: err.message,
             },
         });

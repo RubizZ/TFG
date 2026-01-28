@@ -1,15 +1,15 @@
 import { singleton } from "tsyringe";
-import type { SearchRequest } from "./search.types.js";
+import type { SearchRequest, SearchResponseData } from "./search.types.js";
 import { Search } from "./models/search.model.js";
 import { Itinerary } from "./models/itinerary.model.js"; // Necesario para .populate("itineraries")
 import { SearchNotFoundError } from "./search.errors.js";
 
 @singleton()
 export class SearchService {
-    public async createSearch(data: SearchRequest & { user_id?: string }) {
+    public async createSearch(data: SearchRequest & { user_id?: string }): Promise<SearchResponseData> {
         const search = await Search.create(data)
         this.runExploration(search.public_id, data)
-        return search
+        return search.toJSON() as unknown as SearchResponseData
     }
 
     private async runExploration(searchId: string, criteria: SearchRequest) {
@@ -20,7 +20,7 @@ export class SearchService {
         // Guarda resultados finales en Itinerary, actualiza status de Search a completed
     }
 
-    public async getSearch(searchId: string, requesterId: string | undefined) {
+    public async getSearch(searchId: string, requesterId: string | undefined): Promise<SearchResponseData> {
         const query = requesterId
             ? { public_id: searchId, $or: [{ user_id: requesterId }, { user_id: { $exists: false } }] }
             : { public_id: searchId, user_id: { $exists: false } };
@@ -29,6 +29,6 @@ export class SearchService {
         if (search == null)
             throw new SearchNotFoundError(searchId, requesterId ?? 'anonymous')
 
-        return search
+        return search.toJSON() as unknown as SearchResponseData
     }
 }

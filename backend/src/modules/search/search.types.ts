@@ -1,0 +1,61 @@
+import type { ValidationDetails, ValidationFailResponse } from "../../utils/responses.js";
+
+export interface SearchRequest {
+    /**
+     * @minItems 1
+     */
+    origins: string[];
+    /**
+     * @minItems 1
+     */
+    destinations: string[];
+    criteria: {
+        priority: "balanced" | "cheap" | "fast";
+        /**
+         * @minimum 0
+         */
+        max_price?: number;
+    };
+}
+
+export interface LegResponse {
+    order: number;
+    flight_id: string;
+    origin: string;
+    destination: string;
+    price: number;
+    duration: number;
+}
+
+export interface ItineraryResponse {
+    search_id: string;
+    score: number;
+    total_price: number;
+    total_duration: number;
+    city_order: string[];
+    legs: LegResponse[];
+    created_at: string;
+}
+
+export interface SearchResponseData {
+    public_id: string;
+    user_id?: string;
+    origins: string[];
+    destinations: string[];
+    criteria: {
+        priority: "balanced" | "cheap" | "fast";
+        max_price?: number;
+    };
+    status: "searching" | "completed" | "failed";
+    itineraries?: ItineraryResponse[];
+    created_at: string;
+}
+
+export type SearchValidationFailResponse = ValidationFailResponse<ValidationDetails<
+    | "body"
+    | "body.origins"
+    | "body.destinations"
+    | "body.criteria"
+    | "body.criteria.priority"
+    | "body.criteria.max_price"
+>>;

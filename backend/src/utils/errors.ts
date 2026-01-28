@@ -1,9 +1,9 @@
-export class AppError extends Error {
-    public readonly statusCode: number;
+export abstract class AppError extends Error {
+    public abstract readonly code: string;
+    public abstract readonly statusCode: number;
 
-    constructor(message: string, statusCode: number) {
+    constructor(message: string) {
         super(message);
-        this.statusCode = statusCode;
     }
 
     toJSON() {
