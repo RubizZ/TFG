@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import idValidator from "mongoose-id-validator";
 
 export interface ILeg {
   order: number;
@@ -20,20 +21,71 @@ export interface IItinerary {
 }
 
 const LegSchema = new Schema<ILeg>({
-  order: { type: Number, required: true },
-  flight_id: { type: String, ref: "Flight", required: true },
-  origin: { type: String, required: true },
-  destination: { type: String, required: true },
-  price: { type: Number, required: true },
-  duration: { type: Number, required: true }
+  order: { 
+    type: Number, 
+    required: true,
+    min: [0, "El orden no puede ser negativo"]
+  },
+  flight_id: { 
+    type: String, 
+    ref: "Flight", 
+    required: true
+  },
+  origin: { 
+    type: String, 
+    ref: "Airport",
+    required: true,
+    uppercase: true,
+    match: [/^[A-Z]{3}$/, "El origen debe ser código IATA válido"]
+  },
+  destination: { 
+    type: String, 
+    ref: "Airport",
+    required: true,
+    uppercase: true,
+    match: [/^[A-Z]{3}$/, "El destino debe ser código IATA válido"]
+  },
+  price: { 
+    type: Number, 
+    required: true,
+    min: [0, "El precio no puede ser negativo"]
+  },
+  duration: { 
+    type: Number, 
+    required: true,
+    min: [0, "La duración no puede ser negativa"]
+  }
 });
 
 const ItinerarySchema = new Schema<IItinerary>({
-  search_id: { type: String, ref: "Search", required: true },
-  score: { type: Number, required: true },
-  total_price: { type: Number, required: true },
-  total_duration: { type: Number, required: true },
-  city_order: [String],
+  search_id: { 
+    type: String, 
+    ref: "Search", 
+    required: true
+  },
+  score: { 
+    type: Number, 
+    required: true,
+    min: [0, "El score no puede ser negativo"],
+    max: [10, "El score no puede exceder 10"]
+  },
+  total_price: { 
+    type: Number, 
+    required: true,
+    min: [0, "El precio no puede ser negativo"]
+  },
+  total_duration: { 
+    type: Number, 
+    required: true,
+    min: [0, "La duración no puede ser negativa"]
+  },
+  city_order: [{
+    type: String,
+    ref: "Airport",
+    required: true,
+    uppercase: true,
+    match: [/^[A-Z]{3}$/, "Cada aeropuerto debe ser código IATA válido"]
+  }],
   legs: [LegSchema],
   created_at: { type: Date, default: Date.now }
 }, {
@@ -51,6 +103,10 @@ const ItinerarySchema = new Schema<IItinerary>({
     }
   },
   id: false
+});
+
+ItinerarySchema.plugin(idValidator, {
+  message: "{PATH} '{VALUE}' no existe en {REF}"
 });
 
 export const Itinerary = model<IItinerary>("Itinerary", ItinerarySchema);
