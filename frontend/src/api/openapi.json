@@ -1,0 +1,2158 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"SafeUser": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"role": {
+						"type": "string",
+						"enum": [
+							"user",
+							"admin"
+						]
+					},
+					"preferences": {
+						"properties": {
+							"airline_quality_weight": {
+								"type": "number",
+								"format": "double"
+							},
+							"stops_weight": {
+								"type": "number",
+								"format": "double"
+							},
+							"duration_weight": {
+								"type": "number",
+								"format": "double"
+							},
+							"price_weight": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"airline_quality_weight",
+							"stops_weight",
+							"duration_weight",
+							"price_weight"
+						],
+						"type": "object"
+					},
+					"created_at": {
+						"type": "string"
+					},
+					"last_seen_at": {
+						"type": "string"
+					},
+					"auth_version": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"id",
+					"username",
+					"email",
+					"role",
+					"preferences",
+					"created_at",
+					"last_seen_at",
+					"auth_version"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateUserResponseData": {
+				"$ref": "#/components/schemas/SafeUser",
+				"description": "Respuesta del endpoint POST /users (registro)"
+			},
+			"SuccessResponse_CreateUserResponseData_": {
+				"description": "Wrapper de éxito JSend (aplicado por el middleware global).",
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": [
+							"success"
+						],
+						"nullable": false
+					},
+					"data": {
+						"$ref": "#/components/schemas/CreateUserResponseData"
+					}
+				},
+				"required": [
+					"status",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"FailResponse_CONFLICT_": {
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
+					},
+					"data": {
+						"properties": {
+							"code": {
+								"type": "string",
+								"enum": [
+									"CONFLICT"
+								],
+								"nullable": false
+							},
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"code",
+							"message"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"status",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ValidationDetails_body-or-body.username-or-body.email-or-body.password-or-body.preferences-or-body.preferences.price_weight-or-body.preferences.duration_weight-or-body.preferences.stops_weight-or-body.preferences.airline_quality_weight_": {
+				"properties": {
+					"body": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.username": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.email": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.password": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.preferences": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.preferences.price_weight": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.preferences.duration_weight": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.preferences.stops_weight": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.preferences.airline_quality_weight": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					}
+				},
+				"type": "object",
+				"description": "Generador de estructura de detalles.\nTransforma una unión de llaves ('body' | 'body.id') en el objeto que TSOA espera."
+			},
+			"ValidationFailResponse_ValidationDetails_body-or-body.username-or-body.email-or-body.password-or-body.preferences-or-body.preferences.price_weight-or-body.preferences.duration_weight-or-body.preferences.stops_weight-or-body.preferences.airline_quality_weight__": {
+				"properties": {
+					"data": {
+						"properties": {
+							"details": {
+								"$ref": "#/components/schemas/ValidationDetails_body-or-body.username-or-body.email-or-body.password-or-body.preferences-or-body.preferences.price_weight-or-body.preferences.duration_weight-or-body.preferences.stops_weight-or-body.preferences.airline_quality_weight_"
+							},
+							"message": {
+								"type": "string"
+							},
+							"code": {
+								"type": "string",
+								"enum": [
+									"VALIDATION_ERROR"
+								],
+								"nullable": false
+							}
+						},
+						"required": [
+							"details",
+							"message",
+							"code"
+						],
+						"type": "object"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"data",
+					"status"
+				],
+				"type": "object"
+			},
+			"RegisterValidationFailResponse": {
+				"$ref": "#/components/schemas/ValidationFailResponse_ValidationDetails_body-or-body.username-or-body.email-or-body.password-or-body.preferences-or-body.preferences.price_weight-or-body.preferences.duration_weight-or-body.preferences.stops_weight-or-body.preferences.airline_quality_weight__"
+			},
+			"RegisterData": {
+				"properties": {
+					"username": {
+						"type": "string",
+						"minLength": 3,
+						"maxLength": 20
+					},
+					"email": {
+						"type": "string",
+						"format": "email",
+						"pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+					},
+					"password": {
+						"type": "string",
+						"minLength": 8
+					},
+					"preferences": {
+						"properties": {
+							"airline_quality_weight": {
+								"type": "number",
+								"format": "double",
+								"minimum": 0,
+								"maximum": 1
+							},
+							"stops_weight": {
+								"type": "number",
+								"format": "double",
+								"minimum": 0,
+								"maximum": 1
+							},
+							"duration_weight": {
+								"type": "number",
+								"format": "double",
+								"minimum": 0,
+								"maximum": 1
+							},
+							"price_weight": {
+								"type": "number",
+								"format": "double",
+								"minimum": 0,
+								"maximum": 1
+							}
+						},
+						"type": "object"
+					}
+				},
+				"required": [
+					"username",
+					"email",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetUserResponseData": {
+				"$ref": "#/components/schemas/SafeUser",
+				"description": "Respuesta del endpoint GET /users/me"
+			},
+			"SuccessResponse_GetUserResponseData_": {
+				"description": "Wrapper de éxito JSend (aplicado por el middleware global).",
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": [
+							"success"
+						],
+						"nullable": false
+					},
+					"data": {
+						"$ref": "#/components/schemas/GetUserResponseData"
+					}
+				},
+				"required": [
+					"status",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"FailResponse_NO_TOKEN_PROVIDED-or-INVALID_TOKEN-or-TOKEN_USER_NOT_FOUND-or-AUTH_VERSION_MISMATCH_": {
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
+					},
+					"data": {
+						"properties": {
+							"code": {
+								"type": "string",
+								"enum": [
+									"NO_TOKEN_PROVIDED",
+									"INVALID_TOKEN",
+									"TOKEN_USER_NOT_FOUND",
+									"AUTH_VERSION_MISMATCH"
+								]
+							},
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"code",
+							"message"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"status",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AuthFailResponse": {
+				"$ref": "#/components/schemas/FailResponse_NO_TOKEN_PROVIDED-or-INVALID_TOKEN-or-TOKEN_USER_NOT_FOUND-or-AUTH_VERSION_MISMATCH_",
+				"description": "Tipo de respuesta para errores de autenticación JWT (401).\nCubre todos los errores lanzados por expressAuthentication:\n- NO_TOKEN_PROVIDED: No se proporcionó token\n- INVALID_TOKEN: Token inválido o expirado\n- TOKEN_USER_NOT_FOUND: Usuario del token ya no existe\n- AUTH_VERSION_MISMATCH: Sesión invalidada (logoutAll)"
+			},
+			"AuthenticatedUser": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"role": {
+						"type": "string",
+						"enum": [
+							"user",
+							"admin"
+						]
+					},
+					"preferences": {
+						"properties": {
+							"airline_quality_weight": {
+								"type": "number",
+								"format": "double"
+							},
+							"stops_weight": {
+								"type": "number",
+								"format": "double"
+							},
+							"duration_weight": {
+								"type": "number",
+								"format": "double"
+							},
+							"price_weight": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"airline_quality_weight",
+							"stops_weight",
+							"duration_weight",
+							"price_weight"
+						],
+						"type": "object"
+					},
+					"created_at": {
+						"type": "string"
+					},
+					"last_seen_at": {
+						"type": "string"
+					},
+					"auth_version": {
+						"type": "number",
+						"format": "double"
+					},
+					"token": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"username",
+					"email",
+					"role",
+					"preferences",
+					"created_at",
+					"last_seen_at",
+					"auth_version",
+					"token"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateUserResponseData": {
+				"$ref": "#/components/schemas/SafeUser",
+				"description": "Respuesta del endpoint PATCH /users/me"
+			},
+			"SuccessResponse_UpdateUserResponseData_": {
+				"description": "Wrapper de éxito JSend (aplicado por el middleware global).",
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": [
+							"success"
+						],
+						"nullable": false
+					},
+					"data": {
+						"$ref": "#/components/schemas/UpdateUserResponseData"
+					}
+				},
+				"required": [
+					"status",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"FailResponse_NOT_FOUND_": {
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
+					},
+					"data": {
+						"properties": {
+							"code": {
+								"type": "string",
+								"enum": [
+									"NOT_FOUND"
+								],
+								"nullable": false
+							},
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"code",
+							"message"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"status",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ValidationDetails_body-or-body.username-or-body.email-or-body.preferences-or-body.preferences.price_weight-or-body.preferences.duration_weight-or-body.preferences.stops_weight-or-body.preferences.airline_quality_weight_": {
+				"properties": {
+					"body": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.username": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.email": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.preferences": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.preferences.price_weight": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.preferences.duration_weight": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.preferences.stops_weight": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.preferences.airline_quality_weight": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					}
+				},
+				"type": "object",
+				"description": "Generador de estructura de detalles.\nTransforma una unión de llaves ('body' | 'body.id') en el objeto que TSOA espera."
+			},
+			"ValidationFailResponse_ValidationDetails_body-or-body.username-or-body.email-or-body.preferences-or-body.preferences.price_weight-or-body.preferences.duration_weight-or-body.preferences.stops_weight-or-body.preferences.airline_quality_weight__": {
+				"properties": {
+					"data": {
+						"properties": {
+							"details": {
+								"$ref": "#/components/schemas/ValidationDetails_body-or-body.username-or-body.email-or-body.preferences-or-body.preferences.price_weight-or-body.preferences.duration_weight-or-body.preferences.stops_weight-or-body.preferences.airline_quality_weight_"
+							},
+							"message": {
+								"type": "string"
+							},
+							"code": {
+								"type": "string",
+								"enum": [
+									"VALIDATION_ERROR"
+								],
+								"nullable": false
+							}
+						},
+						"required": [
+							"details",
+							"message",
+							"code"
+						],
+						"type": "object"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"data",
+					"status"
+				],
+				"type": "object"
+			},
+			"UpdateUserValidationFailResponse": {
+				"$ref": "#/components/schemas/ValidationFailResponse_ValidationDetails_body-or-body.username-or-body.email-or-body.preferences-or-body.preferences.price_weight-or-body.preferences.duration_weight-or-body.preferences.stops_weight-or-body.preferences.airline_quality_weight__"
+			},
+			"UpdateUserData": {
+				"properties": {
+					"username": {
+						"type": "string",
+						"minLength": 3,
+						"maxLength": 20
+					},
+					"email": {
+						"type": "string",
+						"format": "email",
+						"pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+					},
+					"preferences": {
+						"properties": {
+							"airline_quality_weight": {
+								"type": "number",
+								"format": "double",
+								"minimum": 0,
+								"maximum": 1
+							},
+							"stops_weight": {
+								"type": "number",
+								"format": "double",
+								"minimum": 0,
+								"maximum": 1
+							},
+							"duration_weight": {
+								"type": "number",
+								"format": "double",
+								"minimum": 0,
+								"maximum": 1
+							},
+							"price_weight": {
+								"type": "number",
+								"format": "double",
+								"minimum": 0,
+								"maximum": 1
+							}
+						},
+						"type": "object"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LegResponse": {
+				"properties": {
+					"order": {
+						"type": "number",
+						"format": "double"
+					},
+					"flight_id": {
+						"type": "string"
+					},
+					"origin": {
+						"type": "string"
+					},
+					"destination": {
+						"type": "string"
+					},
+					"price": {
+						"type": "number",
+						"format": "double"
+					},
+					"duration": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"order",
+					"flight_id",
+					"origin",
+					"destination",
+					"price",
+					"duration"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ItineraryResponse": {
+				"properties": {
+					"search_id": {
+						"type": "string"
+					},
+					"score": {
+						"type": "number",
+						"format": "double"
+					},
+					"total_price": {
+						"type": "number",
+						"format": "double"
+					},
+					"total_duration": {
+						"type": "number",
+						"format": "double"
+					},
+					"city_order": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"legs": {
+						"items": {
+							"$ref": "#/components/schemas/LegResponse"
+						},
+						"type": "array"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"search_id",
+					"score",
+					"total_price",
+					"total_duration",
+					"city_order",
+					"legs",
+					"created_at"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SearchResponseData": {
+				"properties": {
+					"public_id": {
+						"type": "string"
+					},
+					"user_id": {
+						"type": "string"
+					},
+					"origins": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"destinations": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"criteria": {
+						"properties": {
+							"max_price": {
+								"type": "number",
+								"format": "double"
+							},
+							"priority": {
+								"type": "string",
+								"enum": [
+									"balanced",
+									"cheap",
+									"fast"
+								]
+							}
+						},
+						"required": [
+							"priority"
+						],
+						"type": "object"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"searching",
+							"completed",
+							"failed"
+						]
+					},
+					"itineraries": {
+						"items": {
+							"$ref": "#/components/schemas/ItineraryResponse"
+						},
+						"type": "array"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"public_id",
+					"origins",
+					"destinations",
+					"criteria",
+					"status",
+					"created_at"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_SearchResponseData_": {
+				"description": "Wrapper de éxito JSend (aplicado por el middleware global).",
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": [
+							"success"
+						],
+						"nullable": false
+					},
+					"data": {
+						"$ref": "#/components/schemas/SearchResponseData"
+					}
+				},
+				"required": [
+					"status",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ValidationDetails_body-or-body.origins-or-body.destinations-or-body.criteria-or-body.criteria.priority-or-body.criteria.max_price_": {
+				"properties": {
+					"body": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.origins": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.destinations": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.criteria": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.criteria.priority": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.criteria.max_price": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					}
+				},
+				"type": "object",
+				"description": "Generador de estructura de detalles.\nTransforma una unión de llaves ('body' | 'body.id') en el objeto que TSOA espera."
+			},
+			"ValidationFailResponse_ValidationDetails_body-or-body.origins-or-body.destinations-or-body.criteria-or-body.criteria.priority-or-body.criteria.max_price__": {
+				"properties": {
+					"data": {
+						"properties": {
+							"details": {
+								"$ref": "#/components/schemas/ValidationDetails_body-or-body.origins-or-body.destinations-or-body.criteria-or-body.criteria.priority-or-body.criteria.max_price_"
+							},
+							"message": {
+								"type": "string"
+							},
+							"code": {
+								"type": "string",
+								"enum": [
+									"VALIDATION_ERROR"
+								],
+								"nullable": false
+							}
+						},
+						"required": [
+							"details",
+							"message",
+							"code"
+						],
+						"type": "object"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"data",
+					"status"
+				],
+				"type": "object"
+			},
+			"SearchValidationFailResponse": {
+				"$ref": "#/components/schemas/ValidationFailResponse_ValidationDetails_body-or-body.origins-or-body.destinations-or-body.criteria-or-body.criteria.priority-or-body.criteria.max_price__"
+			},
+			"SearchRequest": {
+				"properties": {
+					"origins": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"minItems": 1
+					},
+					"destinations": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"minItems": 1
+					},
+					"criteria": {
+						"properties": {
+							"max_price": {
+								"type": "number",
+								"format": "double",
+								"minimum": 0
+							},
+							"priority": {
+								"type": "string",
+								"enum": [
+									"balanced",
+									"cheap",
+									"fast"
+								]
+							}
+						},
+						"required": [
+							"priority"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"origins",
+					"destinations",
+					"criteria"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LoginResponseData": {
+				"description": "Respuesta del endpoint POST /auth/login",
+				"properties": {
+					"userId": {
+						"type": "string"
+					},
+					"token": {
+						"type": "string"
+					},
+					"authVersion": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"userId",
+					"token",
+					"authVersion"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_LoginResponseData_": {
+				"description": "Wrapper de éxito JSend (aplicado por el middleware global).",
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": [
+							"success"
+						],
+						"nullable": false
+					},
+					"data": {
+						"$ref": "#/components/schemas/LoginResponseData"
+					}
+				},
+				"required": [
+					"status",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ValidationDetails_body-or-body.identifier-or-body.password_": {
+				"properties": {
+					"body": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.password": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.identifier": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					}
+				},
+				"type": "object",
+				"description": "Generador de estructura de detalles.\nTransforma una unión de llaves ('body' | 'body.id') en el objeto que TSOA espera."
+			},
+			"ValidationFailResponse_ValidationDetails_body-or-body.identifier-or-body.password__": {
+				"properties": {
+					"data": {
+						"properties": {
+							"details": {
+								"$ref": "#/components/schemas/ValidationDetails_body-or-body.identifier-or-body.password_"
+							},
+							"message": {
+								"type": "string"
+							},
+							"code": {
+								"type": "string",
+								"enum": [
+									"VALIDATION_ERROR"
+								],
+								"nullable": false
+							}
+						},
+						"required": [
+							"details",
+							"message",
+							"code"
+						],
+						"type": "object"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"data",
+					"status"
+				],
+				"type": "object"
+			},
+			"LoginValidationFailResponse": {
+				"$ref": "#/components/schemas/ValidationFailResponse_ValidationDetails_body-or-body.identifier-or-body.password__"
+			},
+			"FailResponse_INVALID_PASSWORD_": {
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
+					},
+					"data": {
+						"properties": {
+							"code": {
+								"type": "string",
+								"enum": [
+									"INVALID_PASSWORD"
+								],
+								"nullable": false
+							},
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"code",
+							"message"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"status",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LoginRequest": {
+				"properties": {
+					"identifier": {
+						"type": "string",
+						"minLength": 3
+					},
+					"password": {
+						"type": "string",
+						"minLength": 8
+					}
+				},
+				"required": [
+					"identifier",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MessageResponseData": {
+				"description": "Respuesta de éxito solo con mensaje (sin datos).\nEl wrapper global lo convertirá en: { status: 'success', data: { message: string } }",
+				"properties": {
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SuccessResponse_MessageResponseData_": {
+				"description": "Wrapper de éxito JSend (aplicado por el middleware global).",
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": [
+							"success"
+						],
+						"nullable": false
+					},
+					"data": {
+						"$ref": "#/components/schemas/MessageResponseData"
+					}
+				},
+				"required": [
+					"status",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ValidationDetails_body-or-body.oldPassword-or-body.newPassword_": {
+				"properties": {
+					"body": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.oldPassword": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.newPassword": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					}
+				},
+				"type": "object",
+				"description": "Generador de estructura de detalles.\nTransforma una unión de llaves ('body' | 'body.id') en el objeto que TSOA espera."
+			},
+			"ValidationFailResponse_ValidationDetails_body-or-body.oldPassword-or-body.newPassword__": {
+				"properties": {
+					"data": {
+						"properties": {
+							"details": {
+								"$ref": "#/components/schemas/ValidationDetails_body-or-body.oldPassword-or-body.newPassword_"
+							},
+							"message": {
+								"type": "string"
+							},
+							"code": {
+								"type": "string",
+								"enum": [
+									"VALIDATION_ERROR"
+								],
+								"nullable": false
+							}
+						},
+						"required": [
+							"details",
+							"message",
+							"code"
+						],
+						"type": "object"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"data",
+					"status"
+				],
+				"type": "object"
+			},
+			"ChangePasswordValidationFailResponse": {
+				"$ref": "#/components/schemas/ValidationFailResponse_ValidationDetails_body-or-body.oldPassword-or-body.newPassword__"
+			},
+			"FailResponse_USER_NOT_FOUND_": {
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
+					},
+					"data": {
+						"properties": {
+							"code": {
+								"type": "string",
+								"enum": [
+									"USER_NOT_FOUND"
+								],
+								"nullable": false
+							},
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"code",
+							"message"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"status",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ChangePasswordRequest": {
+				"properties": {
+					"oldPassword": {
+						"type": "string",
+						"minLength": 8
+					},
+					"newPassword": {
+						"type": "string",
+						"minLength": 8
+					}
+				},
+				"required": [
+					"oldPassword",
+					"newPassword"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ValidationDetails_body-or-body.email_": {
+				"properties": {
+					"body": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.email": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					}
+				},
+				"type": "object",
+				"description": "Generador de estructura de detalles.\nTransforma una unión de llaves ('body' | 'body.id') en el objeto que TSOA espera."
+			},
+			"ValidationFailResponse_ValidationDetails_body-or-body.email__": {
+				"properties": {
+					"data": {
+						"properties": {
+							"details": {
+								"$ref": "#/components/schemas/ValidationDetails_body-or-body.email_"
+							},
+							"message": {
+								"type": "string"
+							},
+							"code": {
+								"type": "string",
+								"enum": [
+									"VALIDATION_ERROR"
+								],
+								"nullable": false
+							}
+						},
+						"required": [
+							"details",
+							"message",
+							"code"
+						],
+						"type": "object"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"data",
+					"status"
+				],
+				"type": "object"
+			},
+			"ForgotPasswordValidationFailResponse": {
+				"$ref": "#/components/schemas/ValidationFailResponse_ValidationDetails_body-or-body.email__"
+			},
+			"ForgotPasswordRequest": {
+				"properties": {
+					"email": {
+						"type": "string",
+						"format": "email",
+						"pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+					}
+				},
+				"required": [
+					"email"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ValidationDetails_body-or-body.token-or-body.newPassword_": {
+				"properties": {
+					"body": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.newPassword": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"body.token": {
+						"properties": {
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					}
+				},
+				"type": "object",
+				"description": "Generador de estructura de detalles.\nTransforma una unión de llaves ('body' | 'body.id') en el objeto que TSOA espera."
+			},
+			"ValidationFailResponse_ValidationDetails_body-or-body.token-or-body.newPassword__": {
+				"properties": {
+					"data": {
+						"properties": {
+							"details": {
+								"$ref": "#/components/schemas/ValidationDetails_body-or-body.token-or-body.newPassword_"
+							},
+							"message": {
+								"type": "string"
+							},
+							"code": {
+								"type": "string",
+								"enum": [
+									"VALIDATION_ERROR"
+								],
+								"nullable": false
+							}
+						},
+						"required": [
+							"details",
+							"message",
+							"code"
+						],
+						"type": "object"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"data",
+					"status"
+				],
+				"type": "object"
+			},
+			"ResetPasswordValidationFailResponse": {
+				"$ref": "#/components/schemas/ValidationFailResponse_ValidationDetails_body-or-body.token-or-body.newPassword__"
+			},
+			"FailResponse_RESET_TOKEN_INVALID_OR_EXPIRED_": {
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
+					},
+					"data": {
+						"properties": {
+							"code": {
+								"type": "string",
+								"enum": [
+									"RESET_TOKEN_INVALID_OR_EXPIRED"
+								],
+								"nullable": false
+							},
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"code",
+							"message"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"status",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ResetPasswordRequest": {
+				"properties": {
+					"token": {
+						"type": "string"
+					},
+					"newPassword": {
+						"type": "string",
+						"minLength": 8
+					}
+				},
+				"required": [
+					"token",
+					"newPassword"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {
+			"jwt": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			},
+			"jwt-optional": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			}
+		}
+	},
+	"info": {
+		"title": "@tfg/backend",
+		"version": "1.0.0",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/users": {
+			"post": {
+				"operationId": "CreateUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_CreateUserResponseData_"
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Email o username ya registrado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FailResponse_CONFLICT_"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Error de validación en los datos de registro",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RegisterValidationFailResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Registra un nuevo usuario en el sistema.",
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RegisterData"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/me": {
+			"get": {
+				"operationId": "GetUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_GetUserResponseData_"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "No autenticado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthFailResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Obtiene los datos del usuario autenticado.",
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			},
+			"patch": {
+				"operationId": "UpdateUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_UpdateUserResponseData_"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "No autenticado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthFailResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Usuario no encontrado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FailResponse_NOT_FOUND_"
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Email o username ya en uso",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FailResponse_CONFLICT_"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Error de validación en los datos de actualización",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UpdateUserValidationFailResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Actualiza los datos del usuario autenticado.",
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateUserData"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/search": {
+			"post": {
+				"operationId": "SearchRequest",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_SearchResponseData_"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Error de validación en la búsqueda",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SearchValidationFailResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Crea una nueva búsqueda de vuelos.\nSi el usuario está autenticado, la búsqueda se asocia a su cuenta.",
+				"tags": [
+					"Search"
+				],
+				"security": [
+					{
+						"jwt-optional": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SearchRequest"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "SearchResult",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_SearchResponseData_"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Búsqueda no encontrada o no autorizada",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FailResponse_NOT_FOUND_"
+								}
+							}
+						}
+					}
+				},
+				"description": "Obtiene los resultados de una búsqueda por su ID.\nSolo devuelve búsquedas del usuario autenticado o búsquedas anónimas.",
+				"tags": [
+					"Search"
+				],
+				"security": [
+					{
+						"jwt-optional": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/auth/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_LoginResponseData_"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Credenciales inválidas",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FailResponse_INVALID_PASSWORD_"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Error de validación en los datos de inicio de sesión",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/LoginValidationFailResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Inicia sesión con un identificador (email o username) y contraseña.",
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/logoutAll": {
+			"post": {
+				"operationId": "LogoutAll",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_MessageResponseData_"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "No autenticado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthFailResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Cierra todas las sesiones activas del usuario (invalida todos los tokens).",
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/auth/change-password": {
+			"post": {
+				"operationId": "ChangePassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_MessageResponseData_"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Contraseña incorrecta",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FailResponse_INVALID_PASSWORD_"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Usuario no encontrado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FailResponse_USER_NOT_FOUND_"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Error de validación en el cambio de contraseña",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ChangePasswordValidationFailResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Cambia la contraseña del usuario autenticado.",
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ChangePasswordRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/forgot-password": {
+			"post": {
+				"operationId": "ForgotPassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_MessageResponseData_"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Error de validación en el email proporcionado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ForgotPasswordValidationFailResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Solicita un email de recuperación de contraseña.\nPor seguridad, siempre devuelve éxito aunque el email no exista.",
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ForgotPasswordRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/reset-password": {
+			"post": {
+				"operationId": "ResetPassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_MessageResponseData_"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Token inválido o expirado",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FailResponse_RESET_TOKEN_INVALID_OR_EXPIRED_"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Error de validación en los datos de restablecimiento",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResetPasswordValidationFailResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Restablece la contraseña usando un token de recuperación.",
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ResetPasswordRequest"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}
