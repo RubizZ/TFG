@@ -5,6 +5,7 @@ export interface IAirline {
   iata_code?: string;
   icao_code?: string;
   country: string;
+  quality_score?: number;
 }
 
 const AirlineSchema = new Schema<IAirline>({
@@ -12,6 +13,7 @@ const AirlineSchema = new Schema<IAirline>({
   iata_code: { type: String, index: true },
   icao_code: { type: String, index: true },
   country: { type: String, required: true },
+  quality_score: { type: Number },
 });
 
 export const Airline = model<IAirline>("Airline", AirlineSchema);
