@@ -1,7 +1,7 @@
 import { singleton } from "tsyringe";
 import type { SearchRequest, SearchResponseData } from "./search.types.js";
 import { Search } from "./models/search.model.js";
-import { Itinerary } from "./models/itinerary.model.js"; // Necesario para .populate("itineraries")
+import "./models/itinerary.model.js"; // Necesario para .populate("itineraries")
 import { SearchNotFoundError } from "./search.errors.js";
 
 @singleton()
@@ -9,7 +9,7 @@ export class SearchService {
     public async createSearch(data: SearchRequest & { user_id?: string }): Promise<SearchResponseData> {
         const search = await Search.create(data)
         this.runExploration(search.public_id, data)
-        return search.toJSON() as unknown as SearchResponseData
+        return search.toJSON() as SearchResponseData
     }
 
     private async runExploration(searchId: string, criteria: SearchRequest) {
@@ -29,6 +29,6 @@ export class SearchService {
         if (search == null)
             throw new SearchNotFoundError(searchId, requesterId ?? 'anonymous')
 
-        return search.toJSON() as unknown as SearchResponseData
+        return search.toJSON() as SearchResponseData
     }
 }

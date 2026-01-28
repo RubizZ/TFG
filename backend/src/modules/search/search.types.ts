@@ -34,7 +34,7 @@ export interface ItineraryResponse {
     total_duration: number;
     city_order: string[];
     legs: LegResponse[];
-    created_at: string;
+    created_at: Date;
 }
 
 export interface SearchResponseData {
@@ -48,7 +48,7 @@ export interface SearchResponseData {
     };
     status: "searching" | "completed" | "failed";
     itineraries?: ItineraryResponse[];
-    created_at: string;
+    created_at: Date;
 }
 
 export type SearchValidationFailResponse = ValidationFailResponse<ValidationDetails<
