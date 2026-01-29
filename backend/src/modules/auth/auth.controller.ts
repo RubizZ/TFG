@@ -1,4 +1,5 @@
-import { Body, Controller, Post, RequestProp, Response, Route, Security, Tags } from "tsoa";
+import { Body, Controller, Post, Request, RequestProp, Response, Route, Security, Tags } from "tsoa";
+import type { Request as ExpressRequest } from "express";
 import { inject, injectable } from "tsyringe";
 import { AuthService } from "./auth.service.js";
 import type { AuthenticatedUser, ChangePasswordRequest, ChangePasswordValidationFailResponse, ForgotPasswordRequest, ForgotPasswordValidationFailResponse, LoginRequest, LoginResponseData, LoginValidationFailResponse, ResetPasswordRequest, ResetPasswordValidationFailResponse } from "./auth.types.js";
@@ -20,10 +21,24 @@ export class AuthController extends Controller {
     @Post("/login")
     @Response<LoginValidationFailResponse>(422, "Error de validación")
     @Response<FailResponseFromError<InvalidCredentialsError>>(401, "Credenciales inválidas")
-    public async login(@Body() body: LoginRequest): Promise<SuccessResponse<LoginResponseData>> {
-        const { identifier, password } = body;
+    public async login(@Body() body: LoginRequest, @Request() request: ExpressRequest): Promise<SuccessResponse | SuccessResponse<LoginResponseData>> {
+        const { identifier, password, responseType } = body;
         try {
-            return await this.authService.login(identifier, password) satisfies LoginResponseData as any;
+            const result = await this.authService.login(identifier, password);
+
+            switch (responseType) {
+                case 'cookie':
+                    request.res!.cookie('token', result.token, {
+                        httpOnly: true,
+                        secure: false,
+                        sameSite: 'strict',
+                        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+                    });
+                    return null as any;
+                case 'json':
+                default:
+                    return result satisfies LoginResponseData as any;
+            }
         } catch (error) {
             // Transformar errores específicos a genérico por seguridad
             if (error instanceof LoginUserNotFoundError || error instanceof InvalidPasswordError) {

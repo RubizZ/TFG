@@ -10,6 +10,7 @@ import swaggerUi from 'swagger-ui-express';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import cookieParser from 'cookie-parser';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,6 +27,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Connect to database
 connectDB();
@@ -74,7 +76,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
             },
         });
     }
-    
+
     // Validación de BASE DE DATOS: errores de Mongoose ValidationError
     // Estos errores vienen cuando un documento no cumple las validaciones del schema
     if (err.name === 'ValidationError') {
@@ -99,7 +101,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
             },
         });
     }
-    
+
     // Errores de NEGOCIO: errores del servicio
     // Incluye lógica de negocio, conflictos, recursos no encontrados, etc.
     if (err instanceof AppError) {
@@ -109,7 +111,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
             data: err.toJSON()
         });
     }
-    
+
     // Errores INTERNOS no capturados
     if (err instanceof Error) {
         console.error(`Unhandled Error on path ${req.path}:\n`, err);
