@@ -7,9 +7,21 @@ import { SearchNotFoundError } from "./search.errors.js";
 @singleton()
 export class SearchService {
     public async createSearch(data: SearchRequest & { user_id?: string }): Promise<SearchResponseData> {
-        const search = await Search.create(data)
-        this.runExploration(search.public_id, data)
-        return search.toJSON() as SearchResponseData
+        const search = await Search.create(data);
+        this.runExploration(search.public_id, data);
+        return this.formatSearchResponse(search.toJSON());
+    }
+
+    public async getSearch(searchId: string, requesterId: string | undefined): Promise<SearchResponseData> {
+        const query = requesterId
+            ? { public_id: searchId, $or: [{ user_id: requesterId }, { user_id: { $exists: false } }] }
+            : { public_id: searchId, user_id: { $exists: false } };
+
+        const search = await Search.findOne(query).populate("itineraries");
+        if (search == null)
+            throw new SearchNotFoundError(searchId, requesterId ?? 'anonymous');
+
+        return this.formatSearchResponse(search.toJSON());
     }
 
     private async runExploration(searchId: string, criteria: SearchRequest) {
@@ -20,15 +32,14 @@ export class SearchService {
         // Guarda resultados finales en Itinerary, actualiza status de Search a completed
     }
 
-    public async getSearch(searchId: string, requesterId: string | undefined): Promise<SearchResponseData> {
-        const query = requesterId
-            ? { public_id: searchId, $or: [{ user_id: requesterId }, { user_id: { $exists: false } }] }
-            : { public_id: searchId, user_id: { $exists: false } };
-
-        const search = await Search.findOne(query).populate("itineraries")
-        if (search == null)
-            throw new SearchNotFoundError(searchId, requesterId ?? 'anonymous')
-
-        return search.toJSON() as SearchResponseData
+    private formatSearchResponse(data: any): SearchResponseData {
+        return {
+            ...data,
+            created_at: data.created_at instanceof Date ? data.created_at.toISOString() : data.created_at,
+            itineraries: data.itineraries?.map((itinerary: any) => ({
+                ...itinerary,
+                created_at: itinerary.created_at instanceof Date ? itinerary.created_at.toISOString() : itinerary.created_at
+            }))
+        };
     }
 }

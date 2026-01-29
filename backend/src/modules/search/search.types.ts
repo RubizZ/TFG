@@ -1,12 +1,14 @@
-import type { ValidationDetails, ValidationFailResponse } from "../../utils/responses.js";
+import type { ValidationDetails, RequestValidationFailResponse, DatabaseValidationFailResponse } from "../../utils/responses.js";
 
 export interface SearchRequest {
     /**
      * @minItems 1
+     * @pattern ^[A-Z]{3}$
      */
     origins: string[];
     /**
      * @minItems 1
+     * @pattern ^[A-Z]{3}$
      */
     destinations: string[];
     criteria: {
@@ -34,7 +36,10 @@ export interface ItineraryResponse {
     total_duration: number;
     city_order: string[];
     legs: LegResponse[];
-    created_at: Date;
+    /**
+     * @isDateTime
+     */
+    created_at: string;
 }
 
 export interface SearchResponseData {
@@ -48,10 +53,13 @@ export interface SearchResponseData {
     };
     status: "searching" | "completed" | "failed";
     itineraries?: ItineraryResponse[];
-    created_at: Date;
+    /**
+     * @isDateTime
+     */
+    created_at: string;
 }
 
-export type SearchValidationFailResponse = ValidationFailResponse<ValidationDetails<
+export type SearchRequestValidationFailResponse = RequestValidationFailResponse<ValidationDetails<
     | "body"
     | "body.origins"
     | "body.destinations"
@@ -59,3 +67,6 @@ export type SearchValidationFailResponse = ValidationFailResponse<ValidationDeta
     | "body.criteria.priority"
     | "body.criteria.max_price"
 >>;
+
+// Unión de todas las posibles respuestas 422 para search
+export type SearchValidationFailResponse = SearchRequestValidationFailResponse | DatabaseValidationFailResponse;

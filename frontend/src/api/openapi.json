@@ -101,46 +101,71 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"FailResponse_CONFLICT_": {
+			"FailResponse_CONFLICT._field-email-or-username--value-string__": {
 				"properties": {
-					"status": {
-						"type": "string",
-						"enum": [
-							"fail"
-						],
-						"nullable": false
-					},
 					"data": {
 						"properties": {
+							"details": {
+								"properties": {
+									"value": {
+										"type": "string"
+									},
+									"field": {
+										"type": "string",
+										"enum": [
+											"email",
+											"username"
+										]
+									}
+								},
+								"required": [
+									"value",
+									"field"
+								],
+								"type": "object"
+							},
+							"message": {
+								"type": "string"
+							},
 							"code": {
 								"type": "string",
 								"enum": [
 									"CONFLICT"
 								],
 								"nullable": false
-							},
-							"message": {
-								"type": "string"
 							}
 						},
 						"required": [
-							"code",
-							"message"
+							"details",
+							"message",
+							"code"
 						],
 						"type": "object"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
 					}
 				},
 				"required": [
-					"status",
-					"data"
+					"data",
+					"status"
 				],
 				"type": "object",
-				"additionalProperties": false
+				"description": "Tipo genérico base para respuestas de error con código y detalles opcionales."
+			},
+			"FailResponseFromError_UserAlreadyExistsError_": {
+				"$ref": "#/components/schemas/FailResponse_CONFLICT._field-email-or-username--value-string__",
+				"description": "Extrae automáticamente code y details de una clase AppError.\n\nEjemplo:\n- FailResponseFromError<UserAlreadyExistsError> → { status: 'fail', data: { code: 'CONFLICT', message: string, details: { field, value } } }\n- FailResponseFromError<UserNotFoundError> → { status: 'fail', data: { code: 'NOT_FOUND', message: string, details: { userId } } }"
 			},
 			"ValidationDetails_body-or-body.username-or-body.email-or-body.password-or-body.preferences-or-body.preferences.price_weight-or-body.preferences.duration_weight-or-body.preferences.stops_weight-or-body.preferences.airline_quality_weight_": {
 				"properties": {
 					"body": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -152,6 +177,7 @@
 					},
 					"body.username": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -163,6 +189,7 @@
 					},
 					"body.email": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -174,6 +201,7 @@
 					},
 					"body.password": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -185,6 +213,7 @@
 					},
 					"body.preferences": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -196,6 +225,7 @@
 					},
 					"body.preferences.price_weight": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -207,6 +237,7 @@
 					},
 					"body.preferences.duration_weight": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -218,6 +249,7 @@
 					},
 					"body.preferences.stops_weight": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -229,6 +261,7 @@
 					},
 					"body.preferences.airline_quality_weight": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -242,7 +275,7 @@
 				"type": "object",
 				"description": "Generador de estructura de detalles.\nTransforma una unión de llaves ('body' | 'body.id') en el objeto que TSOA espera."
 			},
-			"ValidationFailResponse_ValidationDetails_body-or-body.username-or-body.email-or-body.password-or-body.preferences-or-body.preferences.price_weight-or-body.preferences.duration_weight-or-body.preferences.stops_weight-or-body.preferences.airline_quality_weight__": {
+			"RequestValidationFailResponse_ValidationDetails_body-or-body.username-or-body.email-or-body.password-or-body.preferences-or-body.preferences.price_weight-or-body.preferences.duration_weight-or-body.preferences.stops_weight-or-body.preferences.airline_quality_weight__": {
 				"properties": {
 					"data": {
 						"properties": {
@@ -255,7 +288,71 @@
 							"code": {
 								"type": "string",
 								"enum": [
-									"VALIDATION_ERROR"
+									"REQUEST_VALIDATION_ERROR"
+								],
+								"nullable": false
+							}
+						},
+						"required": [
+							"details",
+							"message",
+							"code"
+						],
+						"type": "object"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"data",
+					"status"
+				],
+				"type": "object"
+			},
+			"RegisterRequestValidationFailResponse": {
+				"$ref": "#/components/schemas/RequestValidationFailResponse_ValidationDetails_body-or-body.username-or-body.email-or-body.password-or-body.preferences-or-body.preferences.price_weight-or-body.preferences.duration_weight-or-body.preferences.stops_weight-or-body.preferences.airline_quality_weight__"
+			},
+			"Record_string._kind-string--path-string--value-any__": {
+				"properties": {},
+				"additionalProperties": {
+					"properties": {
+						"value": {},
+						"path": {
+							"type": "string"
+						},
+						"kind": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"value",
+						"path",
+						"kind"
+					],
+					"type": "object"
+				},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
+			},
+			"DatabaseValidationFailResponse": {
+				"properties": {
+					"data": {
+						"properties": {
+							"details": {
+								"$ref": "#/components/schemas/Record_string._kind-string--path-string--value-any__"
+							},
+							"message": {
+								"type": "string"
+							},
+							"code": {
+								"type": "string",
+								"enum": [
+									"DATABASE_VALIDATION_ERROR"
 								],
 								"nullable": false
 							}
@@ -282,7 +379,14 @@
 				"type": "object"
 			},
 			"RegisterValidationFailResponse": {
-				"$ref": "#/components/schemas/ValidationFailResponse_ValidationDetails_body-or-body.username-or-body.email-or-body.password-or-body.preferences-or-body.preferences.price_weight-or-body.preferences.duration_weight-or-body.preferences.stops_weight-or-body.preferences.airline_quality_weight__"
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/RegisterRequestValidationFailResponse"
+					},
+					{
+						"$ref": "#/components/schemas/DatabaseValidationFailResponse"
+					}
+				]
 			},
 			"RegisterData": {
 				"properties": {
@@ -363,47 +467,213 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"FailResponse_NO_TOKEN_PROVIDED-or-INVALID_TOKEN-or-TOKEN_USER_NOT_FOUND-or-AUTH_VERSION_MISMATCH_": {
+			"FailResponse_NO_TOKEN_PROVIDED._reason-string__": {
 				"properties": {
+					"data": {
+						"properties": {
+							"details": {
+								"properties": {
+									"reason": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"reason"
+								],
+								"type": "object"
+							},
+							"message": {
+								"type": "string"
+							},
+							"code": {
+								"type": "string",
+								"enum": [
+									"NO_TOKEN_PROVIDED"
+								],
+								"nullable": false
+							}
+						},
+						"required": [
+							"details",
+							"message",
+							"code"
+						],
+						"type": "object"
+					},
 					"status": {
 						"type": "string",
 						"enum": [
 							"fail"
 						],
 						"nullable": false
-					},
-					"data": {
-						"properties": {
-							"code": {
-								"type": "string",
-								"enum": [
-									"NO_TOKEN_PROVIDED",
-									"INVALID_TOKEN",
-									"TOKEN_USER_NOT_FOUND",
-									"AUTH_VERSION_MISMATCH"
-								]
-							},
-							"message": {
-								"type": "string"
-							}
-						},
-						"required": [
-							"code",
-							"message"
-						],
-						"type": "object"
 					}
 				},
 				"required": [
-					"status",
-					"data"
+					"data",
+					"status"
 				],
 				"type": "object",
-				"additionalProperties": false
+				"description": "Tipo genérico base para respuestas de error con código y detalles opcionales."
+			},
+			"FailResponse_INVALID_TOKEN.undefined_": {
+				"properties": {
+					"data": {
+						"properties": {
+							"details": {},
+							"message": {
+								"type": "string"
+							},
+							"code": {
+								"type": "string",
+								"enum": [
+									"INVALID_TOKEN"
+								],
+								"nullable": false
+							}
+						},
+						"required": [
+							"message",
+							"code"
+						],
+						"type": "object"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"data",
+					"status"
+				],
+				"type": "object",
+				"description": "Tipo genérico base para respuestas de error con código y detalles opcionales."
+			},
+			"FailResponse_TOKEN_USER_NOT_FOUND._userId-string__": {
+				"properties": {
+					"data": {
+						"properties": {
+							"details": {
+								"properties": {
+									"userId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"userId"
+								],
+								"type": "object"
+							},
+							"message": {
+								"type": "string"
+							},
+							"code": {
+								"type": "string",
+								"enum": [
+									"TOKEN_USER_NOT_FOUND"
+								],
+								"nullable": false
+							}
+						},
+						"required": [
+							"details",
+							"message",
+							"code"
+						],
+						"type": "object"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"data",
+					"status"
+				],
+				"type": "object",
+				"description": "Tipo genérico base para respuestas de error con código y detalles opcionales."
+			},
+			"FailResponse_AUTH_VERSION_MISMATCH._userId-string--currentVersion-number--tokenVersion-number__": {
+				"properties": {
+					"data": {
+						"properties": {
+							"details": {
+								"properties": {
+									"tokenVersion": {
+										"type": "number",
+										"format": "double"
+									},
+									"currentVersion": {
+										"type": "number",
+										"format": "double"
+									},
+									"userId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"tokenVersion",
+									"currentVersion",
+									"userId"
+								],
+								"type": "object"
+							},
+							"message": {
+								"type": "string"
+							},
+							"code": {
+								"type": "string",
+								"enum": [
+									"AUTH_VERSION_MISMATCH"
+								],
+								"nullable": false
+							}
+						},
+						"required": [
+							"details",
+							"message",
+							"code"
+						],
+						"type": "object"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"data",
+					"status"
+				],
+				"type": "object",
+				"description": "Tipo genérico base para respuestas de error con código y detalles opcionales."
 			},
 			"AuthFailResponse": {
-				"$ref": "#/components/schemas/FailResponse_NO_TOKEN_PROVIDED-or-INVALID_TOKEN-or-TOKEN_USER_NOT_FOUND-or-AUTH_VERSION_MISMATCH_",
-				"description": "Tipo de respuesta para errores de autenticación JWT (401).\nCubre todos los errores lanzados por expressAuthentication:\n- NO_TOKEN_PROVIDED: No se proporcionó token\n- INVALID_TOKEN: Token inválido o expirado\n- TOKEN_USER_NOT_FOUND: Usuario del token ya no existe\n- AUTH_VERSION_MISMATCH: Sesión invalidada (logoutAll)"
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/FailResponse_NO_TOKEN_PROVIDED._reason-string__"
+					},
+					{
+						"$ref": "#/components/schemas/FailResponse_INVALID_TOKEN.undefined_"
+					},
+					{
+						"$ref": "#/components/schemas/FailResponse_TOKEN_USER_NOT_FOUND._userId-string__"
+					},
+					{
+						"$ref": "#/components/schemas/FailResponse_AUTH_VERSION_MISMATCH._userId-string--currentVersion-number--tokenVersion-number__"
+					}
+				],
+				"description": "Tipo de respuesta para errores de autenticación JWT (401).\nCubre todos los errores lanzados por expressAuthentication:\n- NO_TOKEN_PROVIDED: No se proporcionó token (con reason en details)\n- INVALID_TOKEN: Token inválido o expirado\n- TOKEN_USER_NOT_FOUND: Usuario del token ya no existe (con userId en details)\n- AUTH_VERSION_MISMATCH: Sesión invalidada (con userId, currentVersion, tokenVersion en details)"
 			},
 			"AuthenticatedUser": {
 				"properties": {
@@ -503,46 +773,63 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"FailResponse_NOT_FOUND_": {
+			"FailResponse_NOT_FOUND._userId-string__": {
 				"properties": {
-					"status": {
-						"type": "string",
-						"enum": [
-							"fail"
-						],
-						"nullable": false
-					},
 					"data": {
 						"properties": {
+							"details": {
+								"properties": {
+									"userId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"userId"
+								],
+								"type": "object"
+							},
+							"message": {
+								"type": "string"
+							},
 							"code": {
 								"type": "string",
 								"enum": [
 									"NOT_FOUND"
 								],
 								"nullable": false
-							},
-							"message": {
-								"type": "string"
 							}
 						},
 						"required": [
-							"code",
-							"message"
+							"details",
+							"message",
+							"code"
 						],
 						"type": "object"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
 					}
 				},
 				"required": [
-					"status",
-					"data"
+					"data",
+					"status"
 				],
 				"type": "object",
-				"additionalProperties": false
+				"description": "Tipo genérico base para respuestas de error con código y detalles opcionales."
+			},
+			"FailResponseFromError_UserNotFoundError_": {
+				"$ref": "#/components/schemas/FailResponse_NOT_FOUND._userId-string__",
+				"description": "Extrae automáticamente code y details de una clase AppError.\n\nEjemplo:\n- FailResponseFromError<UserAlreadyExistsError> → { status: 'fail', data: { code: 'CONFLICT', message: string, details: { field, value } } }\n- FailResponseFromError<UserNotFoundError> → { status: 'fail', data: { code: 'NOT_FOUND', message: string, details: { userId } } }"
 			},
 			"ValidationDetails_body-or-body.username-or-body.email-or-body.preferences-or-body.preferences.price_weight-or-body.preferences.duration_weight-or-body.preferences.stops_weight-or-body.preferences.airline_quality_weight_": {
 				"properties": {
 					"body": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -554,6 +841,7 @@
 					},
 					"body.username": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -565,6 +853,7 @@
 					},
 					"body.email": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -576,6 +865,7 @@
 					},
 					"body.preferences": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -587,6 +877,7 @@
 					},
 					"body.preferences.price_weight": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -598,6 +889,7 @@
 					},
 					"body.preferences.duration_weight": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -609,6 +901,7 @@
 					},
 					"body.preferences.stops_weight": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -620,6 +913,7 @@
 					},
 					"body.preferences.airline_quality_weight": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -633,7 +927,7 @@
 				"type": "object",
 				"description": "Generador de estructura de detalles.\nTransforma una unión de llaves ('body' | 'body.id') en el objeto que TSOA espera."
 			},
-			"ValidationFailResponse_ValidationDetails_body-or-body.username-or-body.email-or-body.preferences-or-body.preferences.price_weight-or-body.preferences.duration_weight-or-body.preferences.stops_weight-or-body.preferences.airline_quality_weight__": {
+			"RequestValidationFailResponse_ValidationDetails_body-or-body.username-or-body.email-or-body.preferences-or-body.preferences.price_weight-or-body.preferences.duration_weight-or-body.preferences.stops_weight-or-body.preferences.airline_quality_weight__": {
 				"properties": {
 					"data": {
 						"properties": {
@@ -646,7 +940,7 @@
 							"code": {
 								"type": "string",
 								"enum": [
-									"VALIDATION_ERROR"
+									"REQUEST_VALIDATION_ERROR"
 								],
 								"nullable": false
 							}
@@ -672,8 +966,18 @@
 				],
 				"type": "object"
 			},
+			"UpdateUserRequestValidationFailResponse": {
+				"$ref": "#/components/schemas/RequestValidationFailResponse_ValidationDetails_body-or-body.username-or-body.email-or-body.preferences-or-body.preferences.price_weight-or-body.preferences.duration_weight-or-body.preferences.stops_weight-or-body.preferences.airline_quality_weight__"
+			},
 			"UpdateUserValidationFailResponse": {
-				"$ref": "#/components/schemas/ValidationFailResponse_ValidationDetails_body-or-body.username-or-body.email-or-body.preferences-or-body.preferences.price_weight-or-body.preferences.duration_weight-or-body.preferences.stops_weight-or-body.preferences.airline_quality_weight__"
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/UpdateUserRequestValidationFailResponse"
+					},
+					{
+						"$ref": "#/components/schemas/DatabaseValidationFailResponse"
+					}
+				]
 			},
 			"UpdateUserData": {
 				"properties": {
@@ -785,8 +1089,7 @@
 						"type": "array"
 					},
 					"created_at": {
-						"type": "string",
-						"format": "date-time"
+						"type": "string"
 					}
 				},
 				"required": [
@@ -856,8 +1159,7 @@
 						"type": "array"
 					},
 					"created_at": {
-						"type": "string",
-						"format": "date-time"
+						"type": "string"
 					}
 				},
 				"required": [
@@ -896,6 +1198,7 @@
 				"properties": {
 					"body": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -907,6 +1210,7 @@
 					},
 					"body.origins": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -918,6 +1222,7 @@
 					},
 					"body.destinations": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -929,6 +1234,7 @@
 					},
 					"body.criteria": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -940,6 +1246,7 @@
 					},
 					"body.criteria.priority": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -951,6 +1258,7 @@
 					},
 					"body.criteria.max_price": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -964,7 +1272,7 @@
 				"type": "object",
 				"description": "Generador de estructura de detalles.\nTransforma una unión de llaves ('body' | 'body.id') en el objeto que TSOA espera."
 			},
-			"ValidationFailResponse_ValidationDetails_body-or-body.origins-or-body.destinations-or-body.criteria-or-body.criteria.priority-or-body.criteria.max_price__": {
+			"RequestValidationFailResponse_ValidationDetails_body-or-body.origins-or-body.destinations-or-body.criteria-or-body.criteria.priority-or-body.criteria.max_price__": {
 				"properties": {
 					"data": {
 						"properties": {
@@ -977,7 +1285,7 @@
 							"code": {
 								"type": "string",
 								"enum": [
-									"VALIDATION_ERROR"
+									"REQUEST_VALIDATION_ERROR"
 								],
 								"nullable": false
 							}
@@ -1003,8 +1311,18 @@
 				],
 				"type": "object"
 			},
+			"SearchRequestValidationFailResponse": {
+				"$ref": "#/components/schemas/RequestValidationFailResponse_ValidationDetails_body-or-body.origins-or-body.destinations-or-body.criteria-or-body.criteria.priority-or-body.criteria.max_price__"
+			},
 			"SearchValidationFailResponse": {
-				"$ref": "#/components/schemas/ValidationFailResponse_ValidationDetails_body-or-body.origins-or-body.destinations-or-body.criteria-or-body.criteria.priority-or-body.criteria.max_price__"
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SearchRequestValidationFailResponse"
+					},
+					{
+						"$ref": "#/components/schemas/DatabaseValidationFailResponse"
+					}
+				]
 			},
 			"SearchRequest": {
 				"properties": {
@@ -1013,14 +1331,16 @@
 							"type": "string"
 						},
 						"type": "array",
-						"minItems": 1
+						"minItems": 1,
+						"pattern": "^[A-Z]{3}$"
 					},
 					"destinations": {
 						"items": {
 							"type": "string"
 						},
 						"type": "array",
-						"minItems": 1
+						"minItems": 1,
+						"pattern": "^[A-Z]{3}$"
 					},
 					"criteria": {
 						"properties": {
@@ -1051,6 +1371,62 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"FailResponse_NOT_FOUND._searchId-string--requesterId-string__": {
+				"properties": {
+					"data": {
+						"properties": {
+							"details": {
+								"properties": {
+									"requesterId": {
+										"type": "string"
+									},
+									"searchId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"requesterId",
+									"searchId"
+								],
+								"type": "object"
+							},
+							"message": {
+								"type": "string"
+							},
+							"code": {
+								"type": "string",
+								"enum": [
+									"NOT_FOUND"
+								],
+								"nullable": false
+							}
+						},
+						"required": [
+							"details",
+							"message",
+							"code"
+						],
+						"type": "object"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"data",
+					"status"
+				],
+				"type": "object",
+				"description": "Tipo genérico base para respuestas de error con código y detalles opcionales."
+			},
+			"FailResponseFromError_SearchNotFoundError_": {
+				"$ref": "#/components/schemas/FailResponse_NOT_FOUND._searchId-string--requesterId-string__",
+				"description": "Extrae automáticamente code y details de una clase AppError.\n\nEjemplo:\n- FailResponseFromError<UserAlreadyExistsError> → { status: 'fail', data: { code: 'CONFLICT', message: string, details: { field, value } } }\n- FailResponseFromError<UserNotFoundError> → { status: 'fail', data: { code: 'NOT_FOUND', message: string, details: { userId } } }"
 			},
 			"LoginResponseData": {
 				"description": "Respuesta del endpoint POST /auth/login",
@@ -1099,6 +1475,7 @@
 				"properties": {
 					"body": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -1110,6 +1487,7 @@
 					},
 					"body.password": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -1121,6 +1499,7 @@
 					},
 					"body.identifier": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -1134,7 +1513,7 @@
 				"type": "object",
 				"description": "Generador de estructura de detalles.\nTransforma una unión de llaves ('body' | 'body.id') en el objeto que TSOA espera."
 			},
-			"ValidationFailResponse_ValidationDetails_body-or-body.identifier-or-body.password__": {
+			"RequestValidationFailResponse_ValidationDetails_body-or-body.identifier-or-body.password__": {
 				"properties": {
 					"data": {
 						"properties": {
@@ -1147,7 +1526,7 @@
 							"code": {
 								"type": "string",
 								"enum": [
-									"VALIDATION_ERROR"
+									"REQUEST_VALIDATION_ERROR"
 								],
 								"nullable": false
 							}
@@ -1173,44 +1552,63 @@
 				],
 				"type": "object"
 			},
-			"LoginValidationFailResponse": {
-				"$ref": "#/components/schemas/ValidationFailResponse_ValidationDetails_body-or-body.identifier-or-body.password__"
+			"LoginRequestValidationFailResponse": {
+				"$ref": "#/components/schemas/RequestValidationFailResponse_ValidationDetails_body-or-body.identifier-or-body.password__"
 			},
-			"FailResponse_INVALID_PASSWORD_": {
+			"LoginValidationFailResponse": {
+				"$ref": "#/components/schemas/LoginRequestValidationFailResponse"
+			},
+			"FailResponse_INVALID_CREDENTIALS._identifier-string__": {
 				"properties": {
+					"data": {
+						"properties": {
+							"details": {
+								"properties": {
+									"identifier": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"identifier"
+								],
+								"type": "object"
+							},
+							"message": {
+								"type": "string"
+							},
+							"code": {
+								"type": "string",
+								"enum": [
+									"INVALID_CREDENTIALS"
+								],
+								"nullable": false
+							}
+						},
+						"required": [
+							"details",
+							"message",
+							"code"
+						],
+						"type": "object"
+					},
 					"status": {
 						"type": "string",
 						"enum": [
 							"fail"
 						],
 						"nullable": false
-					},
-					"data": {
-						"properties": {
-							"code": {
-								"type": "string",
-								"enum": [
-									"INVALID_PASSWORD"
-								],
-								"nullable": false
-							},
-							"message": {
-								"type": "string"
-							}
-						},
-						"required": [
-							"code",
-							"message"
-						],
-						"type": "object"
 					}
 				},
 				"required": [
-					"status",
-					"data"
+					"data",
+					"status"
 				],
 				"type": "object",
-				"additionalProperties": false
+				"description": "Tipo genérico base para respuestas de error con código y detalles opcionales."
+			},
+			"FailResponseFromError_InvalidCredentialsError_": {
+				"$ref": "#/components/schemas/FailResponse_INVALID_CREDENTIALS._identifier-string__",
+				"description": "Extrae automáticamente code y details de una clase AppError.\n\nEjemplo:\n- FailResponseFromError<UserAlreadyExistsError> → { status: 'fail', data: { code: 'CONFLICT', message: string, details: { field, value } } }\n- FailResponseFromError<UserNotFoundError> → { status: 'fail', data: { code: 'NOT_FOUND', message: string, details: { userId } } }"
 			},
 			"LoginRequest": {
 				"properties": {
@@ -1268,6 +1666,7 @@
 				"properties": {
 					"body": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -1279,6 +1678,7 @@
 					},
 					"body.oldPassword": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -1290,6 +1690,7 @@
 					},
 					"body.newPassword": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -1303,7 +1704,7 @@
 				"type": "object",
 				"description": "Generador de estructura de detalles.\nTransforma una unión de llaves ('body' | 'body.id') en el objeto que TSOA espera."
 			},
-			"ValidationFailResponse_ValidationDetails_body-or-body.oldPassword-or-body.newPassword__": {
+			"RequestValidationFailResponse_ValidationDetails_body-or-body.oldPassword-or-body.newPassword__": {
 				"properties": {
 					"data": {
 						"properties": {
@@ -1316,7 +1717,7 @@
 							"code": {
 								"type": "string",
 								"enum": [
-									"VALIDATION_ERROR"
+									"REQUEST_VALIDATION_ERROR"
 								],
 								"nullable": false
 							}
@@ -1342,44 +1743,122 @@
 				],
 				"type": "object"
 			},
-			"ChangePasswordValidationFailResponse": {
-				"$ref": "#/components/schemas/ValidationFailResponse_ValidationDetails_body-or-body.oldPassword-or-body.newPassword__"
+			"ChangePasswordRequestValidationFailResponse": {
+				"$ref": "#/components/schemas/RequestValidationFailResponse_ValidationDetails_body-or-body.oldPassword-or-body.newPassword__"
 			},
-			"FailResponse_USER_NOT_FOUND_": {
+			"ChangePasswordValidationFailResponse": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/ChangePasswordRequestValidationFailResponse"
+					},
+					{
+						"$ref": "#/components/schemas/DatabaseValidationFailResponse"
+					}
+				]
+			},
+			"FailResponse_INVALID_PASSWORD._identifier-string__": {
 				"properties": {
+					"data": {
+						"properties": {
+							"details": {
+								"properties": {
+									"identifier": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"identifier"
+								],
+								"type": "object"
+							},
+							"message": {
+								"type": "string"
+							},
+							"code": {
+								"type": "string",
+								"enum": [
+									"INVALID_PASSWORD"
+								],
+								"nullable": false
+							}
+						},
+						"required": [
+							"details",
+							"message",
+							"code"
+						],
+						"type": "object"
+					},
 					"status": {
 						"type": "string",
 						"enum": [
 							"fail"
 						],
 						"nullable": false
-					},
+					}
+				},
+				"required": [
+					"data",
+					"status"
+				],
+				"type": "object",
+				"description": "Tipo genérico base para respuestas de error con código y detalles opcionales."
+			},
+			"FailResponseFromError_InvalidPasswordError_": {
+				"$ref": "#/components/schemas/FailResponse_INVALID_PASSWORD._identifier-string__",
+				"description": "Extrae automáticamente code y details de una clase AppError.\n\nEjemplo:\n- FailResponseFromError<UserAlreadyExistsError> → { status: 'fail', data: { code: 'CONFLICT', message: string, details: { field, value } } }\n- FailResponseFromError<UserNotFoundError> → { status: 'fail', data: { code: 'NOT_FOUND', message: string, details: { userId } } }"
+			},
+			"FailResponse_USER_NOT_FOUND._identifier-string__": {
+				"properties": {
 					"data": {
 						"properties": {
+							"details": {
+								"properties": {
+									"identifier": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"identifier"
+								],
+								"type": "object"
+							},
+							"message": {
+								"type": "string"
+							},
 							"code": {
 								"type": "string",
 								"enum": [
 									"USER_NOT_FOUND"
 								],
 								"nullable": false
-							},
-							"message": {
-								"type": "string"
 							}
 						},
 						"required": [
-							"code",
-							"message"
+							"details",
+							"message",
+							"code"
 						],
 						"type": "object"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
 					}
 				},
 				"required": [
-					"status",
-					"data"
+					"data",
+					"status"
 				],
 				"type": "object",
-				"additionalProperties": false
+				"description": "Tipo genérico base para respuestas de error con código y detalles opcionales."
+			},
+			"FailResponseFromError_LoginUserNotFoundError_": {
+				"$ref": "#/components/schemas/FailResponse_USER_NOT_FOUND._identifier-string__",
+				"description": "Extrae automáticamente code y details de una clase AppError.\n\nEjemplo:\n- FailResponseFromError<UserAlreadyExistsError> → { status: 'fail', data: { code: 'CONFLICT', message: string, details: { field, value } } }\n- FailResponseFromError<UserNotFoundError> → { status: 'fail', data: { code: 'NOT_FOUND', message: string, details: { userId } } }"
 			},
 			"ChangePasswordRequest": {
 				"properties": {
@@ -1403,6 +1882,7 @@
 				"properties": {
 					"body": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -1414,6 +1894,7 @@
 					},
 					"body.email": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -1427,7 +1908,7 @@
 				"type": "object",
 				"description": "Generador de estructura de detalles.\nTransforma una unión de llaves ('body' | 'body.id') en el objeto que TSOA espera."
 			},
-			"ValidationFailResponse_ValidationDetails_body-or-body.email__": {
+			"RequestValidationFailResponse_ValidationDetails_body-or-body.email__": {
 				"properties": {
 					"data": {
 						"properties": {
@@ -1440,7 +1921,7 @@
 							"code": {
 								"type": "string",
 								"enum": [
-									"VALIDATION_ERROR"
+									"REQUEST_VALIDATION_ERROR"
 								],
 								"nullable": false
 							}
@@ -1466,8 +1947,11 @@
 				],
 				"type": "object"
 			},
+			"ForgotPasswordRequestValidationFailResponse": {
+				"$ref": "#/components/schemas/RequestValidationFailResponse_ValidationDetails_body-or-body.email__"
+			},
 			"ForgotPasswordValidationFailResponse": {
-				"$ref": "#/components/schemas/ValidationFailResponse_ValidationDetails_body-or-body.email__"
+				"$ref": "#/components/schemas/ForgotPasswordRequestValidationFailResponse"
 			},
 			"ForgotPasswordRequest": {
 				"properties": {
@@ -1487,6 +1971,7 @@
 				"properties": {
 					"body": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -1498,6 +1983,7 @@
 					},
 					"body.newPassword": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -1509,6 +1995,7 @@
 					},
 					"body.token": {
 						"properties": {
+							"value": {},
 							"message": {
 								"type": "string"
 							}
@@ -1522,7 +2009,7 @@
 				"type": "object",
 				"description": "Generador de estructura de detalles.\nTransforma una unión de llaves ('body' | 'body.id') en el objeto que TSOA espera."
 			},
-			"ValidationFailResponse_ValidationDetails_body-or-body.token-or-body.newPassword__": {
+			"RequestValidationFailResponse_ValidationDetails_body-or-body.token-or-body.newPassword__": {
 				"properties": {
 					"data": {
 						"properties": {
@@ -1535,7 +2022,7 @@
 							"code": {
 								"type": "string",
 								"enum": [
-									"VALIDATION_ERROR"
+									"REQUEST_VALIDATION_ERROR"
 								],
 								"nullable": false
 							}
@@ -1561,44 +2048,59 @@
 				],
 				"type": "object"
 			},
-			"ResetPasswordValidationFailResponse": {
-				"$ref": "#/components/schemas/ValidationFailResponse_ValidationDetails_body-or-body.token-or-body.newPassword__"
+			"ResetPasswordRequestValidationFailResponse": {
+				"$ref": "#/components/schemas/RequestValidationFailResponse_ValidationDetails_body-or-body.token-or-body.newPassword__"
 			},
-			"FailResponse_RESET_TOKEN_INVALID_OR_EXPIRED_": {
-				"properties": {
-					"status": {
-						"type": "string",
-						"enum": [
-							"fail"
-						],
-						"nullable": false
+			"ResetPasswordValidationFailResponse": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/ResetPasswordRequestValidationFailResponse"
 					},
+					{
+						"$ref": "#/components/schemas/DatabaseValidationFailResponse"
+					}
+				]
+			},
+			"FailResponse_RESET_TOKEN_INVALID_OR_EXPIRED.undefined_": {
+				"properties": {
 					"data": {
 						"properties": {
+							"details": {},
+							"message": {
+								"type": "string"
+							},
 							"code": {
 								"type": "string",
 								"enum": [
 									"RESET_TOKEN_INVALID_OR_EXPIRED"
 								],
 								"nullable": false
-							},
-							"message": {
-								"type": "string"
 							}
 						},
 						"required": [
-							"code",
-							"message"
+							"message",
+							"code"
 						],
 						"type": "object"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail"
+						],
+						"nullable": false
 					}
 				},
 				"required": [
-					"status",
-					"data"
+					"data",
+					"status"
 				],
 				"type": "object",
-				"additionalProperties": false
+				"description": "Tipo genérico base para respuestas de error con código y detalles opcionales."
+			},
+			"FailResponseFromError_ResetTokenInvalidOrExpiredError_": {
+				"$ref": "#/components/schemas/FailResponse_RESET_TOKEN_INVALID_OR_EXPIRED.undefined_",
+				"description": "Extrae automáticamente code y details de una clase AppError.\n\nEjemplo:\n- FailResponseFromError<UserAlreadyExistsError> → { status: 'fail', data: { code: 'CONFLICT', message: string, details: { field, value } } }\n- FailResponseFromError<UserNotFoundError> → { status: 'fail', data: { code: 'NOT_FOUND', message: string, details: { userId } } }"
 			},
 			"ResetPasswordRequest": {
 				"properties": {
@@ -1659,13 +2161,13 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/FailResponse_CONFLICT_"
+									"$ref": "#/components/schemas/FailResponseFromError_UserAlreadyExistsError_"
 								}
 							}
 						}
 					},
 					"422": {
-						"description": "Error de validación en los datos de registro",
+						"description": "Error de validación",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -1757,7 +2259,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/FailResponse_NOT_FOUND_"
+									"$ref": "#/components/schemas/FailResponseFromError_UserNotFoundError_"
 								}
 							}
 						}
@@ -1767,13 +2269,13 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/FailResponse_CONFLICT_"
+									"$ref": "#/components/schemas/FailResponseFromError_UserAlreadyExistsError_"
 								}
 							}
 						}
 					},
 					"422": {
-						"description": "Error de validación en los datos de actualización",
+						"description": "Error de validación",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -1820,7 +2322,7 @@
 						}
 					},
 					"422": {
-						"description": "Error de validación en la búsqueda",
+						"description": "Error de validación",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -1869,7 +2371,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/FailResponse_NOT_FOUND_"
+									"$ref": "#/components/schemas/FailResponseFromError_SearchNotFoundError_"
 								}
 							}
 						}
@@ -1915,13 +2417,13 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/FailResponse_INVALID_PASSWORD_"
+									"$ref": "#/components/schemas/FailResponseFromError_InvalidCredentialsError_"
 								}
 							}
 						}
 					},
 					"422": {
-						"description": "Error de validación en los datos de inicio de sesión",
+						"description": "Error de validación",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -2005,7 +2507,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/FailResponse_INVALID_PASSWORD_"
+									"$ref": "#/components/schemas/FailResponseFromError_InvalidPasswordError_"
 								}
 							}
 						}
@@ -2015,13 +2517,13 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/FailResponse_USER_NOT_FOUND_"
+									"$ref": "#/components/schemas/FailResponseFromError_LoginUserNotFoundError_"
 								}
 							}
 						}
 					},
 					"422": {
-						"description": "Error de validación en el cambio de contraseña",
+						"description": "Error de validación",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -2068,7 +2570,7 @@
 						}
 					},
 					"422": {
-						"description": "Error de validación en el email proporcionado",
+						"description": "Error de validación",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -2115,13 +2617,13 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/FailResponse_RESET_TOKEN_INVALID_OR_EXPIRED_"
+									"$ref": "#/components/schemas/FailResponseFromError_ResetTokenInvalidOrExpiredError_"
 								}
 							}
 						}
 					},
 					"422": {
-						"description": "Error de validación en los datos de restablecimiento",
+						"description": "Error de validación",
 						"content": {
 							"application/json": {
 								"schema": {

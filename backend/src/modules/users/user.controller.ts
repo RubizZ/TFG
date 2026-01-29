@@ -4,7 +4,9 @@ import { inject, injectable } from "tsyringe";
 import { UserService } from "./user.service.js";
 import type { AuthenticatedUser } from "../auth/auth.types.js";
 import type { IUser } from "./user.model.js";
-import type { AuthFailResponse, FailResponse, SuccessResponse } from "../../utils/responses.js";
+import type { SuccessResponse, FailResponseFromError } from "../../utils/responses.js";
+import type { AuthFailResponse } from "../auth/auth.types.js";
+import { UserAlreadyExistsError, UserNotFoundError } from "./user.errors.js";
 
 @injectable()
 @Route("users")
@@ -20,8 +22,8 @@ export class UsersController extends Controller {
      */
     @Post("/")
     @SuccessResponseDecorator(201, "Created")
-    @Response<FailResponse<'CONFLICT'>>(409, "Email o username ya registrado")
-    @Response<RegisterValidationFailResponse>(422, "Error de validación en los datos de registro")
+    @Response<FailResponseFromError<UserAlreadyExistsError>>(409, "Email o username ya registrado")
+    @Response<RegisterValidationFailResponse>(422, "Error de validación")
     public async createUser(@Body() body: RegisterData): Promise<SuccessResponse<CreateUserResponseData>> {
         const user = await this.userService.createUser(body);
         return this.sanitizeUser(user) satisfies CreateUserResponseData as any;
@@ -44,9 +46,9 @@ export class UsersController extends Controller {
     @Patch("/me")
     @Security("jwt")
     @Response<AuthFailResponse>(401, "No autenticado")
-    @Response<FailResponse<'NOT_FOUND'>>(404, "Usuario no encontrado")
-    @Response<FailResponse<'CONFLICT'>>(409, "Email o username ya en uso")
-    @Response<UpdateUserValidationFailResponse>(422, "Error de validación en los datos de actualización")
+    @Response<FailResponseFromError<UserNotFoundError>>(404, "Usuario no encontrado")
+    @Response<FailResponseFromError<UserAlreadyExistsError>>(409, "Email o username ya en uso")
+    @Response<UpdateUserValidationFailResponse>(422, "Error de validación")
     public async updateUser(@RequestProp('user') user: AuthenticatedUser, @Body() body: UpdateUserData): Promise<SuccessResponse<UpdateUserResponseData>> {
         const updatedUser = await this.userService.updateUser(user.id, body);
         return this.sanitizeUser(updatedUser) satisfies UpdateUserResponseData as any;

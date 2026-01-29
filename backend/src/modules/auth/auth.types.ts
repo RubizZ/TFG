@@ -1,7 +1,22 @@
-import type { ValidationDetails, ValidationFailResponse } from "../../utils/responses.js";
+import type { ValidationDetails, RequestValidationFailResponse, DatabaseValidationFailResponse, FailResponseFromError } from "../../utils/responses.js";
 import type { SafeUser } from "../users/user.types.js";
+import type { NoTokenProvidedError, InvalidTokenError, TokenUserNotFoundError, AuthenticationVersionMismatchError } from "./auth.errors.js";
 
 // ==================== TIPOS DE AUTENTICACIÓN ====================
+
+/**
+ * Tipo de respuesta para errores de autenticación JWT (401).
+ * Cubre todos los errores lanzados por expressAuthentication:
+ * - NO_TOKEN_PROVIDED: No se proporcionó token (con reason en details)
+ * - INVALID_TOKEN: Token inválido o expirado
+ * - TOKEN_USER_NOT_FOUND: Usuario del token ya no existe (con userId en details)
+ * - AUTH_VERSION_MISMATCH: Sesión invalidada (con userId, currentVersion, tokenVersion en details)
+ */
+export type AuthFailResponse = 
+    | FailResponseFromError<NoTokenProvidedError>
+    | FailResponseFromError<InvalidTokenError>
+    | FailResponseFromError<TokenUserNotFoundError>
+    | FailResponseFromError<AuthenticationVersionMismatchError>;
 
 export interface AuthenticatedUser extends SafeUser {
     token: string;
@@ -63,25 +78,31 @@ export interface ResetPasswordRequest {
 
 // ==================== VALIDATION FAIL RESPONSES (422) ====================
 
-export type LoginValidationFailResponse = ValidationFailResponse<ValidationDetails<
+export type LoginRequestValidationFailResponse = RequestValidationFailResponse<ValidationDetails<
     | "body"
     | "body.identifier"
     | "body.password"
 >>;
 
-export type ChangePasswordValidationFailResponse = ValidationFailResponse<ValidationDetails<
+export type ChangePasswordRequestValidationFailResponse = RequestValidationFailResponse<ValidationDetails<
     | "body"
     | "body.oldPassword"
     | "body.newPassword"
 >>;
 
-export type ForgotPasswordValidationFailResponse = ValidationFailResponse<ValidationDetails<
+export type ForgotPasswordRequestValidationFailResponse = RequestValidationFailResponse<ValidationDetails<
     | "body"
     | "body.email"
 >>;
 
-export type ResetPasswordValidationFailResponse = ValidationFailResponse<ValidationDetails<
+export type ResetPasswordRequestValidationFailResponse = RequestValidationFailResponse<ValidationDetails<
     | "body"
     | "body.token"
     | "body.newPassword"
 >>;
+
+// Uniones para todas las posibles respuestas 422
+export type LoginValidationFailResponse = LoginRequestValidationFailResponse;
+export type ChangePasswordValidationFailResponse = ChangePasswordRequestValidationFailResponse | DatabaseValidationFailResponse;
+export type ForgotPasswordValidationFailResponse = ForgotPasswordRequestValidationFailResponse;
+export type ResetPasswordValidationFailResponse = ResetPasswordRequestValidationFailResponse | DatabaseValidationFailResponse;
