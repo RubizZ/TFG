@@ -1,4 +1,4 @@
-import type { ValidationDetails, ValidationFailResponse } from "../../utils/responses.js";
+import type { ValidationDetails, RequestValidationFailResponse, DatabaseValidationFailResponse } from "../../utils/responses.js";
 
 // ==================== TIPOS DE USUARIO ====================
 
@@ -119,7 +119,7 @@ export interface UpdateUserData {
 
 // ==================== TIPOS DE ERROR ====================
 
-export type RegisterValidationFailResponse = ValidationFailResponse<ValidationDetails<
+export type RegisterRequestValidationFailResponse = RequestValidationFailResponse<ValidationDetails<
     | "body"
     | "body.username"
     | "body.email"
@@ -131,7 +131,7 @@ export type RegisterValidationFailResponse = ValidationFailResponse<ValidationDe
     | "body.preferences.airline_quality_weight"
 >>;
 
-export type UpdateUserValidationFailResponse = ValidationFailResponse<ValidationDetails<
+export type UpdateUserRequestValidationFailResponse = RequestValidationFailResponse<ValidationDetails<
     | "body"
     | "body.username"
     | "body.email"
@@ -141,3 +141,9 @@ export type UpdateUserValidationFailResponse = ValidationFailResponse<Validation
     | "body.preferences.stops_weight"
     | "body.preferences.airline_quality_weight"
 >>;
+
+// Unión de todas las posibles respuestas 422 para register
+export type RegisterValidationFailResponse = RegisterRequestValidationFailResponse | DatabaseValidationFailResponse;
+
+// Unión de todas las posibles respuestas 422 para update
+export type UpdateUserValidationFailResponse = UpdateUserRequestValidationFailResponse | DatabaseValidationFailResponse;

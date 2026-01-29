@@ -61,27 +61,56 @@ RegisterRoutes(app)
 
 // Error handling middleware for validation request errors, business logic errors and unhandled errors
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction): express.Response | void => {
+    // Validación de REQUEST: errores en los datos del HTTP request (tipo, formato, rango)
+    // Estos errores vienen de tsoa antes de ejecutar el controlador
     if (err instanceof ValidateError) {
-        console.log(`ValidateError on path ${req.path}:\n`, err);
+        console.log(`REQUEST_VALIDATION_ERROR on path ${req.path}:\n`, err);
         return res.status(422).json({
             status: 'fail',
             data: {
-                code: 'VALIDATION_ERROR',
+                code: 'REQUEST_VALIDATION_ERROR',
                 message: 'Request validation failed',
                 details: err.fields,
             },
         });
     }
+    
+    // Validación de BASE DE DATOS: errores de Mongoose ValidationError
+    // Estos errores vienen cuando un documento no cumple las validaciones del schema
+    if (err.name === 'ValidationError') {
+        console.log(`DATABASE_VALIDATION_ERROR on path ${req.path}:\n`, err);
+        const details: Record<string, { kind: string; path: string; value: any }> = {};
+        for (const key in err.errors) {
+            const error = err.errors[key];
+            if (error) {
+                details[key] = {
+                    kind: error.kind || error.name || 'ValidationError',
+                    path: error.path || key,
+                    value: error.value
+                };
+            }
+        }
+        return res.status(422).json({
+            status: 'fail',
+            data: {
+                code: 'DATABASE_VALIDATION_ERROR',
+                message: 'Database validation failed',
+                details
+            },
+        });
+    }
+    
+    // Errores de NEGOCIO: errores del servicio
+    // Incluye lógica de negocio, conflictos, recursos no encontrados, etc.
     if (err instanceof AppError) {
         console.log(`AppError on path ${req.path}:\n`, err);
         return res.status(err.statusCode).json({
             status: 'fail',
-            data: {
-                code: err.code,
-                message: err.message,
-            },
+            data: err.toJSON()
         });
     }
+    
+    // Errores INTERNOS no capturados
     if (err instanceof Error) {
         console.error(`Unhandled Error on path ${req.path}:\n`, err);
         return res.status(500).json({

@@ -2,7 +2,7 @@ import type { Request } from "express";
 import type { AuthenticatedUser, JWTPayload } from "./auth.types.js";
 import jwt from "jsonwebtoken";
 import { User } from "../users/user.model.js";
-import { AuthError, AuthenticationVersionMismatchError, InvalidTokenError, NoTokenProvidedError, TokenUserNotFoundError } from "./auth.errors.js";
+import { AuthenticationVersionMismatchError, InvalidTokenError, NoTokenProvidedError, TokenUserNotFoundError } from "./auth.errors.js";
 import type { SafeUser } from "../users/user.types.js";
 
 if (!process.env.JWT_SECRET) {
@@ -22,23 +22,23 @@ export async function expressAuthentication(
     // Lógica principal de validación JWT
     const validateJWT = async () => {
         if (!headerValue || !headerValue.startsWith('Bearer ')) {
-            throw new NoTokenProvidedError();
+            throw new NoTokenProvidedError('Missing or invalid authorization header format');
         }
 
         const token = headerValue.split(' ')[1];
         if (!token) {
-            throw new NoTokenProvidedError();
+            throw new NoTokenProvidedError('Token missing after Bearer prefix');
         }
 
         const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
 
         const user = await User.findOne({ id: decoded.userId });
         if (!user) {
-            throw new TokenUserNotFoundError();
+            throw new TokenUserNotFoundError(decoded.userId);
         }
 
         if (user.auth_version !== decoded.version) {
-            throw new AuthenticationVersionMismatchError();
+            throw new AuthenticationVersionMismatchError(decoded.userId, user.auth_version, decoded.version);
         }
 
         user.last_seen_at = new Date();
@@ -74,10 +74,14 @@ export async function expressAuthentication(
             return null; // Invitado si no hay token jwt
         }
     } catch (err) {
-        if (err instanceof AuthError) {
+        // Propagar errores de autenticación específicos
+        if (err instanceof NoTokenProvidedError ||
+            err instanceof TokenUserNotFoundError ||
+            err instanceof AuthenticationVersionMismatchError ||
+            err instanceof InvalidTokenError) {
             throw err;
         }
-        const message = err instanceof Error ? err.message : undefined;
+        const message = err instanceof Error ? err.message : 'Unknown error';
         throw new InvalidTokenError(message);
     }
 

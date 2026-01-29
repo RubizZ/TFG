@@ -3,7 +3,8 @@ import type { SearchRequest, SearchResponseData, SearchValidationFailResponse } 
 import { inject, injectable } from "tsyringe";
 import { SearchService } from "./search.service.js";
 import type { AuthenticatedUser } from "../auth/auth.types.js";
-import type { FailResponse, SuccessResponse } from "../../utils/responses.js";
+import type { SuccessResponse, FailResponseFromError } from "../../utils/responses.js";
+import { SearchNotFoundError } from "./search.errors.js";
 
 @injectable()
 @Route("search")
@@ -22,7 +23,7 @@ export class SearchController extends Controller {
      */
     @Post("/")
     @Security('jwt-optional')
-    @Response<SearchValidationFailResponse>(422, "Error de validación en la búsqueda")
+    @Response<SearchValidationFailResponse>(422, "Error de validación")
     @SuccessResponseDecorator(201, "Búsqueda creada")
     public async searchRequest(
         @Body() body: SearchRequest,
@@ -41,7 +42,7 @@ export class SearchController extends Controller {
      */
     @Get("/")
     @Security('jwt-optional')
-    @Response<FailResponse<'NOT_FOUND'>>(404, "Búsqueda no encontrada o no autorizada")
+    @Response<FailResponseFromError<SearchNotFoundError>>(404, "Búsqueda no encontrada o no autorizada")
     public async searchResult(
         @Query('id') searchId: string,
         @RequestProp('user') user: AuthenticatedUser | null

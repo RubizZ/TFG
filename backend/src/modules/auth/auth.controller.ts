@@ -2,7 +2,9 @@ import { Body, Controller, Post, RequestProp, Response, Route, Security, Tags } 
 import { inject, injectable } from "tsyringe";
 import { AuthService } from "./auth.service.js";
 import type { AuthenticatedUser, ChangePasswordRequest, ChangePasswordValidationFailResponse, ForgotPasswordRequest, ForgotPasswordValidationFailResponse, LoginRequest, LoginResponseData, LoginValidationFailResponse, ResetPasswordRequest, ResetPasswordValidationFailResponse } from "./auth.types.js";
-import type { AuthFailResponse, FailResponse, MessageResponseData, SuccessResponse } from "../../utils/responses.js";
+import type { FailResponseFromError, MessageResponseData, SuccessResponse } from "../../utils/responses.js";
+import type { AuthFailResponse } from "./auth.types.js";
+import { InvalidCredentialsError, LoginUserNotFoundError, InvalidPasswordError, ResetTokenInvalidOrExpiredError } from "./auth.errors.js";
 
 @injectable()
 @Route("auth")
@@ -16,11 +18,19 @@ export class AuthController extends Controller {
      * Inicia sesión con un identificador (email o username) y contraseña.
      */
     @Post("/login")
-    @Response<LoginValidationFailResponse>(422, "Error de validación en los datos de inicio de sesión")
-    @Response<FailResponse<'INVALID_PASSWORD'>>(401, "Credenciales inválidas")
+    @Response<LoginValidationFailResponse>(422, "Error de validación")
+    @Response<FailResponseFromError<InvalidCredentialsError>>(401, "Credenciales inválidas")
     public async login(@Body() body: LoginRequest): Promise<SuccessResponse<LoginResponseData>> {
         const { identifier, password } = body;
-        return await this.authService.login(identifier, password) satisfies LoginResponseData as any;
+        try {
+            return await this.authService.login(identifier, password) satisfies LoginResponseData as any;
+        } catch (error) {
+            // Transformar errores específicos a genérico por seguridad
+            if (error instanceof LoginUserNotFoundError || error instanceof InvalidPasswordError) {
+                throw new InvalidCredentialsError(identifier);
+            }
+            throw error;
+        }
     }
 
     /**
@@ -41,10 +51,10 @@ export class AuthController extends Controller {
      */
     @Post("/change-password")
     @Security("jwt")
-    @Response<ChangePasswordValidationFailResponse>(422, "Error de validación en el cambio de contraseña")
+    @Response<ChangePasswordValidationFailResponse>(422, "Error de validación")
     @Response<AuthFailResponse>(401, "No autenticado")
-    @Response<FailResponse<'INVALID_PASSWORD'>>(401, "Contraseña incorrecta")
-    @Response<FailResponse<'USER_NOT_FOUND'>>(404, "Usuario no encontrado")
+    @Response<FailResponseFromError<InvalidPasswordError>>(401, "Contraseña incorrecta")
+    @Response<FailResponseFromError<LoginUserNotFoundError>>(404, "Usuario no encontrado")
     public async changePassword(@RequestProp("user") user: AuthenticatedUser, @Body() body: ChangePasswordRequest): Promise<SuccessResponse<MessageResponseData>> {
         const { oldPassword, newPassword } = body;
         await this.authService.changePassword(user.id, oldPassword, newPassword);
@@ -58,7 +68,7 @@ export class AuthController extends Controller {
      * Por seguridad, siempre devuelve éxito aunque el email no exista.
      */
     @Post("/forgot-password")
-    @Response<ForgotPasswordValidationFailResponse>(422, "Error de validación en el email proporcionado")
+    @Response<ForgotPasswordValidationFailResponse>(422, "Error de validación")
     public async forgotPassword(@Body() body: ForgotPasswordRequest): Promise<SuccessResponse<MessageResponseData>> {
         const { email } = body;
         await this.authService.forgotPassword(email);
@@ -71,8 +81,8 @@ export class AuthController extends Controller {
      * Restablece la contraseña usando un token de recuperación.
      */
     @Post("/reset-password")
-    @Response<ResetPasswordValidationFailResponse>(422, "Error de validación en los datos de restablecimiento")
-    @Response<FailResponse<'RESET_TOKEN_INVALID_OR_EXPIRED'>>(400, "Token inválido o expirado")
+    @Response<ResetPasswordValidationFailResponse>(422, "Error de validación")
+    @Response<FailResponseFromError<ResetTokenInvalidOrExpiredError>>(400, "Token inválido o expirado")
     public async resetPassword(@Body() body: ResetPasswordRequest): Promise<SuccessResponse<MessageResponseData>> {
         const { token, newPassword } = body;
         await this.authService.resetPassword(token, newPassword);

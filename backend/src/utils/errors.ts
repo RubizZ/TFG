@@ -1,15 +1,20 @@
-export abstract class AppError extends Error {
-    public abstract readonly code: string;
+export abstract class AppError<TCode extends string = string, TDetails = undefined> extends Error {
+    public abstract readonly code: TCode;
     public abstract readonly statusCode: number;
+    public details!: TDetails extends undefined ? undefined : TDetails;
 
     constructor(message: string) {
         super(message);
     }
 
     toJSON() {
-        return {
-            message: this.message,
-            statusCode: this.statusCode
+        const result: any = {
+            code: this.code,
+            message: this.message
         };
+        if (this.details !== undefined) {
+            result.details = this.details;
+        }
+        return result;
     }
 }

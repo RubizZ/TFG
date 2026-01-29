@@ -6,7 +6,7 @@ import ms from 'ms'
 import crypto from "node:crypto";
 import { MailService } from "../../services/mail.service.js";
 import { MailTemplates } from "../../services/mail.templates.js";
-import { InvalidPasswordError, UserNotFoundError, ResetTokenInvalidOrExpiredError } from "./auth.errors.js";
+import { ResetTokenInvalidOrExpiredError, LoginUserNotFoundError, InvalidPasswordError } from "./auth.errors.js";
 import type { LoginResponseData, JWTPayload } from "./auth.types.js";
 
 export class PasswordService {
@@ -50,10 +50,10 @@ export class AuthService {
     }
 
     public async login(identifier: string, password: string): Promise<LoginResponseData> {
-        const user = await User.findOne({ $or: [{ email: identifier }, { username: identifier }] })
+        const user = await User.findOne({ $or: [{ email: identifier }, { username: identifier }] }).select('+password');
 
         if (!user) {
-            throw new InvalidPasswordError(identifier); // Evitar que el error indique que el usuario no existe 
+            throw new LoginUserNotFoundError(identifier);
         }
 
         const passwordMatch = PasswordService.comparePassword(password, user.password);
@@ -83,8 +83,8 @@ export class AuthService {
     }
 
     public async changePassword(userId: string, oldPassword: string, newPassword: string) {
-        const user = await User.findOne({ id: userId });
-        if (!user) throw new UserNotFoundError(userId);
+        const user = await User.findOne({ id: userId }).select('+password');
+        if (!user) throw new LoginUserNotFoundError(userId);
 
         const passwordMatch = PasswordService.comparePassword(oldPassword, user.password);
         if (!passwordMatch) throw new InvalidPasswordError(userId);
