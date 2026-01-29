@@ -21,13 +21,20 @@ export async function expressAuthentication(
 
     // Lógica principal de validación JWT
     const validateJWT = async () => {
-        if (!headerValue || !headerValue.startsWith('Bearer ')) {
-            throw new NoTokenProvidedError('Missing or invalid authorization header format');
+        let token: string | undefined;
+
+        // Intentar obtener desde cookie (HttpOnly)
+        if (request.cookies && request.cookies.token) {
+            token = request.cookies.token;
         }
 
-        const token = headerValue.split(' ')[1];
+        // Si no hay cookie, intentar desde header Authorization
+        if (!token && headerValue && headerValue.startsWith('Bearer ')) {
+            token = headerValue.split(' ')[1];
+        }
+
         if (!token) {
-            throw new NoTokenProvidedError('Token missing after Bearer prefix');
+            throw new NoTokenProvidedError('Missing or invalid authorization token (Cookie or Bearer header)');
         }
 
         const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;

@@ -5,7 +5,7 @@ import type { AppError } from "./errors.js";
 /**
  * Wrapper de éxito JSend (aplicado por el middleware global).
  */
-export interface SuccessResponse<T> {
+export interface SuccessResponse<T = null> {
     status: 'success';
     data: T;
 }
@@ -40,10 +40,10 @@ export type FailResponse<TCode extends string, TDetails = undefined> = {
  * - FailResponseFromError<UserAlreadyExistsError> → { status: 'fail', data: { code: 'CONFLICT', message: string, details: { field, value } } }
  * - FailResponseFromError<UserNotFoundError> → { status: 'fail', data: { code: 'NOT_FOUND', message: string, details: { userId } } }
  */
-export type FailResponseFromError<T extends AppError<any, any>> = 
-    T extends AppError<infer TCode, infer TDetails> 
-        ? FailResponse<TCode, TDetails>
-        : never;
+export type FailResponseFromError<T extends AppError<any, any>> =
+    T extends AppError<infer TCode, infer TDetails>
+    ? FailResponse<TCode, TDetails>
+    : never;
 
 // Patrón para las claves de detalle de validación (el "regex" de TypeScript)
 type ValidationKey = `body.${string}` | `query.${string}` | `path.${string}` | `header.${string}` | `formData.${string}` | `body` | `query` | `path` | `header` | `formData`;

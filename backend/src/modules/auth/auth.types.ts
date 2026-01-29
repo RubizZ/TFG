@@ -12,7 +12,7 @@ import type { NoTokenProvidedError, InvalidTokenError, TokenUserNotFoundError, A
  * - TOKEN_USER_NOT_FOUND: Usuario del token ya no existe (con userId en details)
  * - AUTH_VERSION_MISMATCH: Sesión invalidada (con userId, currentVersion, tokenVersion en details)
  */
-export type AuthFailResponse = 
+export type AuthFailResponse =
     | FailResponseFromError<NoTokenProvidedError>
     | FailResponseFromError<InvalidTokenError>
     | FailResponseFromError<TokenUserNotFoundError>
@@ -47,6 +47,11 @@ export interface LoginRequest {
      * @minLength 8
      */
     password: string;
+    /**
+     * Indicates how the token should be returned.
+     * @default "json"
+     */
+    responseType?: "cookie" | "json";
 }
 
 export interface ChangePasswordRequest {
