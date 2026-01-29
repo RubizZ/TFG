@@ -64,7 +64,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
     // Validación de REQUEST: errores en los datos del HTTP request (tipo, formato, rango)
     // Estos errores vienen de tsoa antes de ejecutar el controlador
     if (err instanceof ValidateError) {
-        console.log(`REQUEST_VALIDATION_ERROR on path ${req.path}:\n`, err);
+        console.log('REQUEST_VALIDATION_ERROR on path %s:\n', req.path, err);
         return res.status(422).json({
             status: 'fail',
             data: {
@@ -78,7 +78,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
     // Validación de BASE DE DATOS: errores de Mongoose ValidationError
     // Estos errores vienen cuando un documento no cumple las validaciones del schema
     if (err.name === 'ValidationError') {
-        console.log(`DATABASE_VALIDATION_ERROR on path ${req.path}:\n`, err);
+        console.log('DATABASE_VALIDATION_ERROR on path %s:\n', req.path, err);
         const details: Record<string, { kind: string; path: string; value: any }> = {};
         for (const key in err.errors) {
             const error = err.errors[key];
