@@ -87,6 +87,7 @@ export type LoginRequestValidationFailResponse = RequestValidationFailResponse<V
     | "body"
     | "body.identifier"
     | "body.password"
+    | "body.responseType"
 >>;
 
 export type ChangePasswordRequestValidationFailResponse = RequestValidationFailResponse<ValidationDetails<
