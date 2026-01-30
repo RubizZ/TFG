@@ -22,51 +22,48 @@ export interface IUser {
 
 const UserSchema = new Schema<IUser>({
   id: { type: String, default: () => randomUUID(), unique: true, index: true },
-  username: { 
-    type: String, 
+  username: {
+    type: String,
     required: true,
-    unique: true, 
-    index: true,
     minlength: [3, "El nombre de usuario debe tener al menos 3 caracteres"],
     maxlength: [50, "El nombre de usuario no puede exceder 50 caracteres"],
     match: [/^[a-zA-Z0-9_-]+$/, "El nombre de usuario solo puede contener letras, números, guiones y guiones bajos"]
   },
-  email: { 
-    type: String, 
+  email: {
+    type: String,
     required: true,
-    unique: true, 
+    unique: true,
     index: true,
     lowercase: true,
     match: [/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Proporciona un email válido"]
   },
-  password: { 
-    type: String, 
+  password: {
+    type: String,
     required: true,
-    minlength: [8, "La contraseña debe tener al menos 8 caracteres"],
     select: false
   },
   role: { type: String, enum: ["user", "admin"], default: "user" },
   preferences: {
-    price_weight: { 
-      type: Number, 
+    price_weight: {
+      type: Number,
       default: 0.4,
       min: [0, "El peso no puede ser menor a 0"],
       max: [1, "El peso no puede ser mayor a 1"]
     },
-    duration_weight: { 
-      type: Number, 
+    duration_weight: {
+      type: Number,
       default: 0.2,
       min: [0, "El peso no puede ser menor a 0"],
       max: [1, "El peso no puede ser mayor a 1"]
     },
-    stops_weight: { 
-      type: Number, 
+    stops_weight: {
+      type: Number,
       default: 0.2,
       min: [0, "El peso no puede ser menor a 0"],
       max: [1, "El peso no puede ser mayor a 1"]
     },
-    airline_quality_weight: { 
-      type: Number, 
+    airline_quality_weight: {
+      type: Number,
       default: 0.2,
       min: [0, "El peso no puede ser menor a 0"],
       max: [1, "El peso no puede ser mayor a 1"]
@@ -79,9 +76,15 @@ const UserSchema = new Schema<IUser>({
   password_reset_expires: { type: Date, select: false }
 });
 
-UserSchema.pre('save', function() {
-  const sum = this.preferences.price_weight + this.preferences.duration_weight + 
-              this.preferences.stops_weight + this.preferences.airline_quality_weight;
+// Índice único case-insensitive para username
+UserSchema.index(
+  { username: 1 },
+  { unique: true, collation: { locale: 'en', strength: 2 } }
+);
+
+UserSchema.pre('save', function () {
+  const sum = this.preferences.price_weight + this.preferences.duration_weight +
+    this.preferences.stops_weight + this.preferences.airline_quality_weight;
   if (Math.abs(sum - 1.0) > 0.001) {
     throw new Error('Los pesos de preferencias deben sumar 1.0');
   }

@@ -1,5 +1,6 @@
 import { singleton } from "tsyringe";
 import type { HydratedDocument } from "mongoose";
+import { MongoServerError } from "mongodb";
 import type { RegisterData, UpdateUserData } from "./user.types.js";
 import { User, type IUser } from "./user.model.js";
 import { PasswordService } from "../auth/auth.service.js";
@@ -14,16 +15,14 @@ export class UserService {
                 ...data,
                 password: PasswordService.hashPassword(data.password)
             }));
-        } catch (error: any) {
+        } catch (error) {
             // Duplicate key error de MongoDB (código 11000)
-            // Ocurre cuando se viola una restricción unique en la BD
-            if (error.name === 'MongoServerError' && error.code === 11000) {
-                const field = Object.keys(error.keyValue || {})[0] as 'username' | 'email' | undefined;
+            if (error instanceof MongoServerError && error.code === 11000) {
+                const field = Object.keys(error.keyPattern ?? {})[0] as 'username' | 'email' | undefined;
                 if (field) {
-                    throw new UserAlreadyExistsError(error.keyValue[field], field);
+                    throw new UserAlreadyExistsError(data[field], field);
                 }
             }
-            // Propagar ValidationError y otros errores
             throw error;
         }
     }
@@ -35,17 +34,16 @@ export class UserService {
                 throw new UserNotFoundError(userId);
             }
             return this.sanitizeUser(updatedUser);
-        } catch (error: any) {
+        } catch (error) {
             if (error instanceof UserNotFoundError) throw error;
-            
+
             // Duplicate key error de MongoDB
-            if (error.name === 'MongoServerError' && error.code === 11000) {
-                const field = Object.keys(error.keyValue || {})[0] as 'username' | 'email' | undefined;
-                if (field) {
-                    throw new UserAlreadyExistsError(error.keyValue[field], field);
+            if (error instanceof MongoServerError && error.code === 11000) {
+                const field = Object.keys(error.keyPattern ?? {})[0] as 'username' | 'email' | undefined;
+                if (field && data[field]) {
+                    throw new UserAlreadyExistsError(data[field], field);
                 }
             }
-            // Propagar ValidationError y otros errores
             throw error;
         }
     }
