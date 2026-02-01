@@ -2520,6 +2520,29 @@
 				}
 			}
 		},
+		"/auth/logout": {
+			"post": {
+				"operationId": "Logout",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SuccessResponse_MessageResponseData_"
+								}
+							}
+						}
+					}
+				},
+				"description": "Cierra la sesión actual (limpia la cookie del navegador).",
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
 		"/auth/logoutAll": {
 			"post": {
 				"operationId": "LogoutAll",

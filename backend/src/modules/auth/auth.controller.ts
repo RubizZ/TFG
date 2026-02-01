@@ -49,13 +49,25 @@ export class AuthController extends Controller {
     }
 
     /**
+     * Cierra la sesión actual (limpia la cookie del navegador).
+     */
+    @Post("/logout")
+    public async logout(@Request() request: ExpressRequest): Promise<SuccessResponse<MessageResponseData>> {
+        request.res!.clearCookie('token');
+        return {
+            message: "Sesión cerrada correctamente."
+        } satisfies MessageResponseData as any;
+    }
+
+    /**
      * Cierra todas las sesiones activas del usuario (invalida todos los tokens).
      */
     @Post("/logoutAll")
     @Security("jwt")
     @Response<AuthFailResponse>(401, "No autenticado")
-    public async logoutAll(@RequestProp("user") user: AuthenticatedUser): Promise<SuccessResponse<MessageResponseData>> {
+    public async logoutAll(@RequestProp("user") user: AuthenticatedUser, @Request() request: ExpressRequest): Promise<SuccessResponse<MessageResponseData>> {
         await this.authService.logoutAll(user.id);
+        request.res!.clearCookie('token');
         return {
             message: "Sesiones cerradas correctamente."
         } satisfies MessageResponseData as any;
