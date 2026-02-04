@@ -1,7 +1,7 @@
 import { Controller, Get, Route, Query, Tags } from "tsoa"
 import { injectable, inject } from "tsyringe";
 import { AirlineService } from "./airline.service.js";
-import type { IAirline } from "./models/airline.model.js";
+import type { IAirline } from "./airline.model.js";
 
 @injectable()
 @Route("airlines")

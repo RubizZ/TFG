@@ -1,5 +1,5 @@
 import { singleton } from "tsyringe";
-import { Airport } from "./models/airport.model.js";
+import { Airport } from "./airport.model.js";
 import type { AirportResponse } from "./airport.types.js";
 
 @singleton()

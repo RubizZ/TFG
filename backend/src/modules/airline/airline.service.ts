@@ -1,6 +1,6 @@
 import { singleton } from "tsyringe";
-import { Airline } from "./models/airline.model.js";
-import type { IAirline } from "./models/airline.model.js";
+import { Airline } from "./airline.model.js";
+import type { IAirline } from "./airline.model.js";
 
 @singleton()
 export class AirlineService {
@@ -12,10 +12,9 @@ export class AirlineService {
         const airlines = await Airline.find({
             $or: [
                 { name: regex },
-                { iata_code: regex },
-                { icao_code: regex }
+                { code: regex }
             ]
-        }).limit(10).lean();
+        }).sort({ quality_score: -1 }).limit(10).lean();
 
         return airlines;
     }

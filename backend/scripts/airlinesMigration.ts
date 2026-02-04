@@ -1,7 +1,7 @@
 import fs from "fs";
 import readline from "readline";
 import mongoose from "mongoose";
-import { Airline } from "../src/modules/flights/models/airline.model.js";
+import { Airline } from "../src/modules/airline/airline.model.js";
 
 function parseCSVLine(line: string) {
     const result = [];
@@ -62,18 +62,24 @@ async function migrate(mongoUri: string) {
             if (!iata || iata === "-" || iata === "N/A" || iata === "") iata = undefined;
             if (!icao || icao === "-" || icao === "N/A" || icao === "") icao = undefined;
 
+            const mainCode = iata || icao;
+
             // Si no tiene nombre o no  tiene ningun código identificador, la saltamos
-            if (!name || (!iata && !icao)) {
+            if (!name || !mainCode) {
                 skipped++;
                 continue;
             }
 
+            let score = 10;
+            if (icao) score += 20;
+            if (iata) score += 50;
+
             const airlineDoc = {
+                code: mainCode,
                 name: name,
-                iata_code: iata,
-                icao_code: icao,
                 country: country || "Unknown",
-            }
+                quality_score: score,
+            };
 
             batch.push(airlineDoc);
 
@@ -105,13 +111,9 @@ async function migrate(mongoUri: string) {
 
 async function processBatch(batch: any[]) {
     const ops = batch.map(doc => {
-        const filter = doc.icao_code 
-            ? { icao_code : doc.icao_code }
-            : { iata_code : doc.iata_code };
-
         return {
             updateOne: {
-                filter: filter,
+                filter: { code: doc.code },
                 update: { $set: doc },
                 upsert: true
             }
