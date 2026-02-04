@@ -36,18 +36,28 @@ export class SerpapiStorageService {
     public async getFlightsForGraph(departure: string, arrival: string, date: string): Promise<DijkstraFlightEdge[]> {
         const rawFlights = await this.getAllFlights(departure, arrival, date);
 
-        return rawFlights.map(flight => {
+        const validEdges: DijkstraFlightEdge[] = [];
+
+        for (const flight of rawFlights) {
+            if (!flight.flights || flight.flights.length === 0) {
+                continue;
+            }
+
             const firstSegment = flight.flights[0];
             const lastSegment = flight.flights[flight.flights.length - 1];
 
-            return {
-                id: flight.booking_token, // Usamos el token como ID único
+            if (!firstSegment || !lastSegment) continue;
+
+            validEdges.push({
+                id: flight.booking_token,
                 from: firstSegment.departure_airport.id,
                 to: lastSegment.arrival_airport.id,
                 price: flight.price,
                 duration: flight.total_duration,
                 stops: flight.layovers ? flight.layovers.length : 0
-            }
-        })
+            });
+        }
+        
+        return validEdges;
     }
 }
