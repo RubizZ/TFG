@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import idValidator from "mongoose-id-validator";
+//import idValidator from "mongoose-id-validator";
 
 export interface ILeg {
   order: number;
@@ -105,8 +105,5 @@ const ItinerarySchema = new Schema<IItinerary>({
   id: false
 });
 
-ItinerarySchema.plugin(idValidator, {
-  message: "{PATH} '{VALUE}' no existe en {REF}"
-});
 
 export const Itinerary = model<IItinerary>("Itinerary", ItinerarySchema);

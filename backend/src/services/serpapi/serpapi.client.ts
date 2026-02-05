@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { injectable } from "tsyringe";
+import { injectable, singleton } from "tsyringe";
 import type { ApiRequestParameters, SerpApiResponse } from "./serpapi.types.js";
 import mongoose, { Schema } from "mongoose";
 
@@ -12,7 +12,7 @@ requestsPerDaySchema.index({ date: 1 }, { unique: true });
 
 export const RequestsPerDay = mongoose.model<{ date: string; count: number }>("RequestsPerDay", requestsPerDaySchema);
 
-@injectable()
+@singleton()
 export class SerpApiClient {
 
     private baseUrl = "https://serpapi.com";

@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import { randomUUID } from "node:crypto";
-import idValidator from "mongoose-id-validator";
+//import idValidator from "mongoose-id-validator";
 
 import type { IItinerary } from "./itinerary.model.js";
 
@@ -70,9 +70,6 @@ const SearchSchema = new Schema<ISearch>({
   id: false
 });
 
-SearchSchema.plugin(idValidator, {
-  message: "{PATH} '{VALUE}' no existe en {REF}"
-});
 
 SearchSchema.virtual('itineraries', {
   ref: 'Itinerary',

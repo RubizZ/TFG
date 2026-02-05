@@ -11,6 +11,11 @@ export interface SearchRequest {
      * @pattern ^[A-Z]{3}$
      */
     destinations: string[];
+    /**
+     * Fecha de salida en formato ISO (YYYY-MM-DD)
+     * @pattern ^\d{4}-\d{2}-\d{2}$
+     */
+    departure_date: string;
     criteria: {
         priority: "balanced" | "cheap" | "fast";
         /**
@@ -18,6 +23,9 @@ export interface SearchRequest {
          */
         max_price?: number;
     };
+
+    
+
 }
 
 export interface LegResponse {
