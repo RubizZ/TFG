@@ -8,8 +8,6 @@ const requestsPerDaySchema = new Schema<{ date: string; count: number }>({
     count: { type: Number, required: true, default: 0, max: 1000 },
 });
 
-requestsPerDaySchema.index({ date: 1 }, { unique: true });
-
 export const RequestsPerDay = mongoose.model<{ date: string; count: number }>("RequestsPerDay", requestsPerDaySchema);
 
 @injectable()
