@@ -4,5 +4,6 @@ export interface DijkstraFlightEdge {
     to: string;             
     price: number;          
     duration: number;       
-    stops: number;          
+    stops: number;   
+    date: string; //YYYY-MM-DD
 }

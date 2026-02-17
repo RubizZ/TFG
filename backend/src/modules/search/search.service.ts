@@ -38,7 +38,7 @@ export class SearchService {
     private async runExploration(searchId: string, criteria: SearchRequest) {
     try {
         const sequence = [criteria.origins[0], ...criteria.destinations].filter((node): node is string => !!node);        
-        const date = criteria.departure_date;
+        let currentDate = criteria.departure_date;
         const fullPath: DijkstraFlightEdge[] = [];
 
         for (let i = 0; i < sequence.length - 1; i++) {
@@ -48,7 +48,8 @@ export class SearchService {
             if (!puntoA || !puntoB) continue;
 
             const candidatos = getCandidateLayovers(puntoA, puntoB);
-            const edges = await this.getFlights(candidatos, date);
+            const edges = (await this.getFlights(candidatos, currentDate))
+                .filter(edge => isValidNextFlight(edge.date, currentDate));
 
             const tramo = this.dijkstra.findPath(puntoA, puntoB, edges, criteria.criteria.priority);
 
@@ -57,6 +58,9 @@ export class SearchService {
                 await Search.updateOne({ public_id: searchId }, { status: "failed" });
                 return;
             }
+            const lastFlight = tramo[tramo.length - 1];
+            currentDate = lastFlight!.date;
+
 
             fullPath.push(...tramo);
         }
@@ -174,7 +178,8 @@ export class SearchService {
             to: lastSegment!.arrival_airport.id,
             price: flight.price,
             duration: flight.total_duration,
-            stops: flight.layovers ? flight.layovers.length : 0
+            stops: flight.layovers ? flight.layovers.length : 0,
+            date: response.search_parameters.outbound_date
         };
     });
 }
@@ -207,3 +212,11 @@ function getCandidateLayovers(puntoA: string | undefined, puntoB: string | undef
     return [puntoA, ...Array.from(candidates), puntoB];
 }
 
+function isValidNextFlight(flightDate: string, currentDate: string): boolean {
+    const f = new Date(flightDate);
+    const c = new Date(currentDate);
+
+    c.setDate(c.getDate() + 1); // mínimo +1 día
+
+    return f >= c;
+}
