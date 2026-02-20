@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Info, X } from "lucide-react";
+import DottedBackground from "../ui/DottedBackground";
 
 export default function Footer() {
     const [isExpanded, setIsExpanded] = useState(false);
@@ -50,9 +51,7 @@ export default function Footer() {
                 }}
             >
                 {/* Textura de fondo */}
-                <div className="absolute inset-0 opacity-[0.05] pointer-events-none"
-                    style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)', backgroundSize: '16px 16px' }} />
-                <div className="absolute inset-0 bg-linear-to-tr from-black/20 via-transparent to-white/10 pointer-events-none" />
+                <DottedBackground />
 
                 {/* Brillo en el borde superior */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/40 to-transparent" />

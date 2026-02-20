@@ -1,9 +1,10 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
-type Theme = 'light' | 'dark';
+export type Theme = 'light' | 'dark';
 
 interface ThemeContextType {
     theme: Theme;
+    setTheme: (theme: Theme) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -13,42 +14,27 @@ interface ThemeProviderProps {
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-    const [theme, setTheme] = useState<Theme>(() =>
-        window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-    );
+    const [theme, setTheme] = useState<Theme>(() => {
+        const saved = localStorage.getItem('theme') as Theme;
+        if (saved) return saved;
+        return 'dark'; // Valor por defecto
+    });
 
     useEffect(() => {
         const root = document.documentElement;
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        root.classList.remove('light', 'dark');
+        root.classList.add(theme);
+        localStorage.setItem('theme', theme);
 
-        const updateTheme = (isDark: boolean) => {
-            const newTheme = isDark ? 'dark' : 'light';
-            setTheme(newTheme);
-
-            root.classList.remove('light', 'dark');
-            root.classList.add(newTheme);
-        };
-
-        // Initial sync
-        updateTheme(mediaQuery.matches);
-
-        // Listen for system changes
-        const handleChange = (e: MediaQueryListEvent) => updateTheme(e.matches);
-        mediaQuery.addEventListener('change', handleChange);
-
-        // Enable transitions after a short delay
+        // Activar transiciones tras un pequeño retardo para evitar parpadeos iniciales
         const timeout = setTimeout(() => {
             root.classList.add('theme-transition');
         }, 100);
-
-        return () => {
-            mediaQuery.removeEventListener('change', handleChange);
-            clearTimeout(timeout);
-        };
-    }, []);
+        return () => clearTimeout(timeout);
+    }, [theme]);
 
     return (
-        <ThemeContext.Provider value={{ theme }}>
+        <ThemeContext.Provider value={{ theme, setTheme }}>
             {children}
         </ThemeContext.Provider>
     );
