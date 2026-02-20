@@ -1,33 +1,58 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
-import { TriangleAlert, RefreshCcw, Home } from "lucide-react";
+import { TriangleAlert, RefreshCcw, Home, ChevronDown, ChevronUp, Copy } from "lucide-react";
 
 interface Props {
     children?: ReactNode;
     fallback?: ReactNode;
+    onReset?: () => void;
+    initialError?: Error | null;
 }
 
 interface State {
     hasError: boolean;
     error: Error | null;
+    errorInfo: ErrorInfo | null;
+    showDetails: boolean;
 }
 
 class ErrorBoundary extends Component<Props, State> {
-    public state: State = {
-        hasError: false,
-        error: null,
-    };
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            hasError: !!props.initialError,
+            error: props.initialError || null,
+            errorInfo: null,
+            showDetails: false,
+        };
+    }
 
     public static getDerivedStateFromError(error: Error): State {
-        return { hasError: true, error };
+        return { hasError: true, error, errorInfo: null, showDetails: false };
     }
 
     public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
         console.error("Uncaught error:", error, errorInfo);
+        this.setState({ errorInfo });
     }
 
     private handleReset = () => {
-        this.setState({ hasError: false, error: null });
-        window.location.reload();
+        if (this.props.onReset) {
+            this.props.onReset();
+            this.setState({ hasError: false, error: null, errorInfo: null });
+        } else {
+            this.setState({ hasError: false, error: null, errorInfo: null });
+            window.location.reload();
+        }
+    };
+
+    private toggleDetails = () => {
+        this.setState(prevState => ({ showDetails: !prevState.showDetails }));
+    };
+
+    private copyErrorToClipboard = () => {
+        const { error, errorInfo } = this.state;
+        const text = `Error: ${error?.message}\n\nStack:\n${errorInfo?.componentStack}`;
+        navigator.clipboard.writeText(text);
     };
 
     public render() {
@@ -43,7 +68,7 @@ class ErrorBoundary extends Component<Props, State> {
                     <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-accent/5 blur-[100px] rounded-full" />
                     <div className="absolute -top-20 -left-20 w-64 h-64 bg-accent/5 blur-[100px] rounded-full" />
 
-                    <div className="max-w-md w-full text-center space-y-8 relative z-10 transition-all duration-500">
+                    <div className="max-w-xl w-full text-center space-y-8 relative z-10 transition-all duration-500">
                         <div className="relative inline-block">
                             <div className="absolute inset-0 bg-red-500/10 blur-2xl rounded-full scale-150 animate-pulse" />
                             <div className="relative bg-secondary p-6 rounded-full border border-red-500/20 shadow-2xl">
@@ -54,16 +79,40 @@ class ErrorBoundary extends Component<Props, State> {
                         <div className="space-y-3">
                             <h2 className="text-2xl font-bold text-primary tracking-tight">Vuelo interrumpido</h2>
                             <p className="text-secondary leading-relaxed">
-                                Parece que hemos encontrado una turbulencia inesperada en el sistema al intentar mostrar esta página.
+                                Parece que hemos encontrado una turbulencia inesperada en el sistema. No hemos podido completar tu solicitud.
                             </p>
                         </div>
 
-                        {/* Error detail (optional, subtle) */}
+                        {/* Error detail (Expandable) */}
                         {this.state.error && (
-                            <div className="bg-secondary/50 border border-red-500/10 rounded-xl p-3 text-left overflow-hidden">
-                                <p className="text-[10px] font-mono text-red-500/70 truncate">
-                                    Error: {this.state.error.message}
-                                </p>
+                            <div className="w-full text-left">
+                                <button
+                                    onClick={this.toggleDetails}
+                                    className="flex items-center gap-2 text-xs font-mono text-secondary hover:text-primary transition-colors mx-auto mb-2 cursor-pointer"
+                                >
+                                    {this.state.showDetails ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                                    {this.state.showDetails ? "Ocultar detalles técnicos" : "Ver detalles técnicos"}
+                                </button>
+
+                                {this.state.showDetails && (
+                                    <div className="bg-secondary/50 border border-red-500/10 rounded-xl p-4 overflow-hidden relative group/code animate-in fade-in slide-in-from-top-2 duration-200">
+                                        <button
+                                            onClick={this.copyErrorToClipboard}
+                                            className="absolute top-2 right-2 p-2 bg-primary/50 rounded-md hover:bg-primary text-secondary hover:text-primary transition-all opacity-0 group-hover/code:opacity-100"
+                                            title="Copiar error"
+                                        >
+                                            <Copy size={14} />
+                                        </button>
+                                        <div className="max-h-60 overflow-y-auto custom-scrollbar pr-2">
+                                            <p className="text-sm font-bold text-red-400 mb-2">
+                                                {this.state.error.toString()}
+                                            </p>
+                                            <pre className="text-[10px] font-mono text-secondary whitespace-pre-wrap wrap-break-word">
+                                                {this.state.errorInfo?.componentStack}
+                                            </pre>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
 
