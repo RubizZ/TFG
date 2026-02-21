@@ -55,6 +55,6 @@ export class AirportService {
 
         scoredAirports.sort((a, b) => b._sortScore - a._sortScore);
 
-        return scoredAirports.slice(0, 10).map(({ _sortScore, ...airport }) => airport as any as AirportResponse);
+        return scoredAirports.slice(0, 10).map(({ _sortScore, ...airport }) => airport);
     }
 }
