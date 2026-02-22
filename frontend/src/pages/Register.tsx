@@ -84,6 +84,7 @@ export default function Register() {
         setErrors(newErrors);
 
         if (newErrors.username || newErrors.email || newErrors.password || newErrors.confirmPassword) {
+            toast.error("Por favor completa todos los campos correctamente");
             return;
         }
 
