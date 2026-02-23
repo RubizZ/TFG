@@ -1,7 +1,7 @@
 import fs from "fs";
 import readline from "readline";
 import mongoose from "mongoose";
-import { Airport } from "../src/modules/flights/models/airport.model.js";
+import { Airport } from "../src/modules/airport/airport.model.js";
 
 
 function parseCSVLine(line: string) {

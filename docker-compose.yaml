@@ -43,6 +43,7 @@ services:
       - SMTP_USER=any
       - SMTP_PASS=any
       - SMTP_FROM=TFG <noreply@tfg.local>
+      - FLIGHT_CACHE_TTL_HOURS=${FLIGHT_CACHE_TTL_HOURS: -24}
 
   website:
     build:
