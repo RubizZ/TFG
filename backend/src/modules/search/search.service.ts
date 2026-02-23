@@ -9,6 +9,7 @@ import { SerpapiStorageService } from "../serpapi-storage/serpapi-storage.servic
 import { Dijkstra } from "@/algorithms/dijkstra.js";
 import type { DijkstraFlightEdge } from "../serpapi-storage/dijkstra.types.js";
 import type { ApiRequestParameters, SerpApiResponse, FlightRoute } from "@/services/serpapi/serpapi.types.js";
+import { getCandidateLayovers } from "./candidate-layovers.js";
 
 @singleton()
 export class SearchService {
@@ -47,7 +48,7 @@ export class SearchService {
 
             if (!puntoA || !puntoB) continue;
 
-            const candidatos = getCandidateLayovers(puntoA, puntoB);
+            const candidatos = await getCandidateLayovers(puntoA, puntoB);
             const edges = (await this.getFlights(candidatos, currentDate))
                 .filter(edge => isValidNextFlight(edge.date, currentDate));
 
@@ -185,32 +186,7 @@ export class SearchService {
 }
 }
 
-function getCandidateLayovers(puntoA: string | undefined, puntoB: string | undefined): string[] {
-    if (!puntoA || !puntoB) {
-        return [];
-    }
 
-    // Define common layover hubs by region
-    const layoverHubs: Record<string, string[]> = {
-        'EU': ['CDG', 'LHR', 'AMS', 'FRA', 'MUC'],
-        'US': ['ATL', 'ORD', 'DFW', 'LAX', 'JFK'],
-        'ASIA': ['HND', 'NRT', 'ICN', 'PVG', 'SIN'],
-        'MENA': ['DXB', 'DOH', 'AUH', 'JED']
-    };
-    const candidates = new Set<string>();
-    
-    for (const hubs of Object.values(layoverHubs)) {
-        if (hubs.includes(puntoA) || hubs.includes(puntoB)) {
-            hubs.forEach(hub => {
-                if (hub !== puntoA && hub !== puntoB) {
-                    candidates.add(hub);
-                }
-            });
-        }
-    }
-
-    return [puntoA, ...Array.from(candidates), puntoB];
-}
 
 function isValidNextFlight(flightDate: string, currentDate: string): boolean {
     const f = new Date(flightDate);
