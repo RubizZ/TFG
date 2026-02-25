@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import idValidator from "../../../utils/mongoose-id-validator.js";
 
 import type { IItinerary } from "./itinerary.model.js";
-import "../../flights/models/airport.model.js"; // Necesario para mongoose.model("Airport") en idValidator
+import "@/modules/airport/airport.model.js"; // Necesario para mongoose.model("Airport") en idValidator
 
 export interface ISearch {
   id: string;
