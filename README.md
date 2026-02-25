@@ -2,13 +2,34 @@ Este proyecto implementa un planificador inteligente de vuelos que busca la ruta
 Los precios y combinaciones de vuelos se obtienen dinámicamente desde SerpAPI (Google Flights), minimizando el número de consultas mediante caché persistente en MongoDB.
 
 
-APIs externas
+**APIs externas:**
 
-SerpAPI – Google Flights
+  SerpAPI – Google Flights
   Se utiliza para obtener:
     -Precios reales de vuelos
     -Tramos y escalas
+    
+  Documentación de la API: https://serpapi.com/google-flights-api
 
-El proyecto puede ejecutarse completamente con Docker.
-Arranque: docker compose up --build
-IMPORTANTE: Previamente se tiene que definir la key de SerpApi en .env como : SERPAPI_API_KEY=TU_KEY_DE_SERPAPI
+
+**Guía de despliegue**
+
+**Prerequisitos**
+-Node.js: Instalar Node 18+.
+-Docker: Para despliegue en contenedores.
+
+**Variables de entorno**
+Crear un archivo '.env' en 'backend/' con:
+-SERPAPI_API_KEY: clave para SerpApi.
+
+**Pasos**
+A continuación, abrir un terminal en la carpeta raíz del proyecto y ejecutar los siguientes comandos en orden:
+
+npm install
+cd backend
+docker-compose up -d
+npx tsx scripts/airportsMigration.ts --docker
+npx tsx scripts/airlinesMigration.ts --docker
+
+La página principal será accesible a través de http://localhost:5173
+
