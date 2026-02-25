@@ -10,6 +10,7 @@ import { Dijkstra } from "@/algorithms/dijkstra.js";
 import type { DijkstraFlightEdge } from "../serpapi-storage/dijkstra.types.js";
 import type { ApiRequestParameters, SerpApiResponse, FlightRoute } from "@/services/serpapi/serpapi.types.js";
 import { getCandidateLayovers } from "./candidate-layovers.js";
+import { getOriginalNode } from "typescript";
 
 @singleton()
 export class SearchService {
@@ -40,17 +41,35 @@ export class SearchService {
     try {
         const sequence = [criteria.origins[0], ...criteria.destinations].filter((node): node is string => !!node);        
         let currentDate = criteria.departure_date;
+        const layoverDays = criteria.layover_days ?? [];
         const fullPath: DijkstraFlightEdge[] = [];
 
         for (let i = 0; i < sequence.length - 1; i++) {
             const puntoA = sequence[i];
             const puntoB = sequence[i + 1];
+            const edges : DijkstraFlightEdge[] = [];
 
             if (!puntoA || !puntoB) continue;
 
+            const stayDays = layoverDays[i] ?? 1;
+            const searchDate = i === 0 ? currentDate : addDays(currentDate, stayDays);
+
             const candidatos = await getCandidateLayovers(puntoA, puntoB);
-            const edges = (await this.getFlights(candidatos, currentDate))
-                .filter(edge => isValidNextFlight(edge.date, currentDate));
+            let originArray = [puntoA];
+            let destinationArray = candidatos.length > 0 ? candidatos : [puntoB];
+            const originToLayoversEdges = (await this.getFlightsFromSerpApi(originArray, destinationArray, searchDate)).filter(edge => isValidNextFlight(edge.date, searchDate));
+
+            edges.push(...originToLayoversEdges);
+
+            originArray = candidatos.length > 0 ? candidatos : [puntoA];
+            destinationArray = [puntoB];
+            const layoversToDestEdges = (await this.getFlightsFromSerpApi(originArray, destinationArray, searchDate)).filter(edge => isValidNextFlight(edge.date, searchDate));
+
+            edges.push(...layoversToDestEdges);
+
+            const directFligtEdges = (await this.getFlightsFromSerpApi([puntoA], [puntoB], searchDate)).filter(edge => isValidNextFlight(edge.date, searchDate));
+
+            edges.push(...directFligtEdges);
 
             const tramo = this.dijkstra.findPath(puntoA, puntoB, edges, criteria.criteria.priority);
 
@@ -59,8 +78,7 @@ export class SearchService {
                 await Search.updateOne({ public_id: searchId }, { status: "failed" });
                 return;
             }
-            const lastFlight = tramo[tramo.length - 1];
-            currentDate = lastFlight!.date;
+            currentDate = tramo[tramo.length - 1]!.date;
 
 
             fullPath.push(...tramo);
@@ -117,43 +135,33 @@ export class SearchService {
         };
     }
 
-    private async getFlights(nodos: string[], date: string) : Promise<DijkstraFlightEdge[]> {
-        const edges: DijkstraFlightEdge[] = [];
-        for (let i = 0; i < nodos.length; i++) {
-            for (let j = 0; j < nodos.length; j++) {
-                if (i === j) continue;
-
-                const origin = nodos[i];
-                const destination = nodos[j];
-
-                if (!origin || !destination) continue;
-
-                const existingFlights = await this.storageService.getFlightsForGraph(origin, destination, date);
-
-                if (existingFlights.length === 0) {
-                               
-                    const newFlights = await this.getFlightsFromSerpApi(origin, destination, date);
-                    edges.push(...newFlights);
-                } else {
-                    edges.push(...existingFlights);
-                }
-        }
-        }
-        return edges;
-    }
-
-    private async getFlightsFromSerpApi(origin: string, destination: string, date: string) : Promise<DijkstraFlightEdge[]> {
+    private async getFlightsFromSerpApi(origin: string[], destination: string[], date: string) : Promise<DijkstraFlightEdge[]> {
 
         const response = await this.serpApiClient.search(this.createApiParams(origin, destination, date));
 
-        return this.mapResponseToEdges(response);
+        const edges = this.mapResponseToEdges(response);
+
+        if(origin.length === 1 && destination.length === 1) {
+            return edges;
+        }
+
+        if(origin.length === 1) {
+            return edges.filter(edge=>edge.from === origin[0] && destination.includes(edge.to));
+        }
+
+        if(destination.length === 1) {
+            return edges.filter(edge=>edge.to === destination[0] && origin.includes(edge.from));
+        }
+
+        return [];
+
     }
 
-    private createApiParams(origin: string, destination: string, date: string) : ApiRequestParameters{
+    private createApiParams(origins: string[], destinations: string[], date: string) : ApiRequestParameters{
 
         const params: ApiRequestParameters = {
-            departure_id : origin,
-            arrival_id : destination,
+            departure_id : origins,
+            arrival_id : destinations,
             outbound_date : date,
             gl : "es",
             hl : "es",
@@ -188,11 +196,12 @@ export class SearchService {
 
 
 
-function isValidNextFlight(flightDate: string, currentDate: string): boolean {
-    const f = new Date(flightDate);
-    const c = new Date(currentDate);
+function isValidNextFlight(flightDate: string, minDate: string): boolean {
+    return new Date(flightDate) >= new Date(minDate);
+}
 
-    c.setDate(c.getDate() + 1); // mínimo +1 día
-
-    return f >= c;
+function addDays(date: string, days: number): string {
+    const d = new Date(date);
+    d.setDate(d.getDate() + days);
+    return d.toISOString().split("T")[0]!;
 }
