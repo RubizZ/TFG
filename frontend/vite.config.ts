@@ -25,6 +25,6 @@ export default defineConfig({
         middlewareMode: false,
     },
     build: {
-        sourcemap: true,
+        sourcemap: false,
     },
 })

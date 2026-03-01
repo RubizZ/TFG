@@ -3,7 +3,7 @@ import 'reflect-metadata'
 import express from 'express';
 import cors from 'cors';
 import { connectDB } from './config/database.js';
-import { RegisterRoutes } from '../build/routes.js';
+import { RegisterRoutes } from './tsoa/routes.js';
 import { ValidateError as TsoaValidateError } from 'tsoa';
 import { AppError } from './utils/errors.js';
 import swaggerUi from 'swagger-ui-express';

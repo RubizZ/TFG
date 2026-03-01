@@ -21,6 +21,7 @@ services:
   server:
     build:
       context: ./backend
+      dockerfile: Dockerfile.dev
     ports:
       - 3000:3000
       - 9229:9229
@@ -48,6 +49,7 @@ services:
   website:
     build:
       context: ./frontend
+      dockerfile: Dockerfile.dev
     environment:
       CHOKIDAR_USEPOLLING: "true"
       VITE_BACKEND_API_BASE_URL: "http://localhost:3000"
