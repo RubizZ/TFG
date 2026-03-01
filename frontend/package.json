@@ -8,7 +8,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run orval && vite build",
     "preview": "vite preview",
     "test": "echo \"Error: no test specified\" && exit 1",
     "orval": "orval"
