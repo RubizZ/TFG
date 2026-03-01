@@ -6,9 +6,12 @@ import FloatingLabelInput from "@/components/ui/FloatingLabelInput";
 import { useCreateUser } from "@/api/generated/users/users";
 import { useLogin } from "@/api/generated/auth/auth";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { getGetUserQueryKey } from "@/api/generated/users/users";
 
 export default function Register() {
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const [formData, setFormData] = useState({
         username: "",
         email: "",
@@ -25,6 +28,7 @@ export default function Register() {
     const { mutate: performLogin } = useLogin({
         mutation: {
             onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: getGetUserQueryKey() });
                 toast.success("¡Bienvenido a bordo!");
                 navigate("/");
             },
@@ -66,7 +70,7 @@ export default function Register() {
                                 break;
                         }
                         break;
-                    case "DATABASE_VALIDATION_ERROR":
+                    case "DATABASE_VALIDATION_ERROR": // TODO Mejorar validacion de base de datos
                         toast.error(error.message);
                         break;
                 }
@@ -113,7 +117,7 @@ export default function Register() {
 
     return (
         <AuthLayout>
-            <AuthCard title="Únete a fl/AI\ght">
+            <AuthCard title="Únete a flAIghts">
                 <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-5">
 
                     <FloatingLabelInput
@@ -153,12 +157,15 @@ export default function Register() {
                         value={formData.confirmPassword}
                         onChange={handleChange}
                         type="password"
+                        isRepeat
                         id="confirmPassword"
                         name="confirmPassword"
                         label="Confirmar contraseña"
                         error={errors.confirmPassword}
                         onKeyDown={enterKeyPress}
                     />
+
+                    <p className="text-xs text-center text-gray-500">Al registrarte, aceptas los <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">Términos de servicio</a> y la <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">Política de privacidad</a>.</p>
 
                     <button
                         type="button"
